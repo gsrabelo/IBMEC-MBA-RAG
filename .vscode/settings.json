@@ -1,0 +1,5 @@
+{
+  "python.defaultInterpreterPath": "${env:HOME}/00 IA/D09/.venv/bin/python",
+  "jupyter.kernelSpecProvider.provider": "localKernelProvider",
+  "jupyter.notebookFileRoot": "${workspaceFolder}"
+}

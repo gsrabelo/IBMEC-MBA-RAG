@@ -1,6 +1,7 @@
-Roteiro/
-.claude/
-.venv/
 .env
-aula2/datasets/acordao-completo-2026.csv
-
+*.env
+.venv/
+__pycache__/
+*.pyc
+models/
+*.gguf
