@@ -1,9 +1,9 @@
 # Índice — Aula 4: OpenSearch Completo — Dense, Hybrid Search, Neural Sparse e Contextual Retrieval
-## Vetores + Texto, RRF, Search Pipelines e Contextual Retrieval
+## Ollama BGE-M3 (connector ML Commons) · SPLADE Multilíngue Pré-Treinado · Groq LLM · RRF · Search Pipelines
 ### MBA em RAG & CAG Aplicados a Direito e Segurança Pública
 
-**Aula:** 4 de 12 | **Carga:** 5h | **Proporção:** 30% teoria / 70% prática  
-**Pré-requisito:** Aula 3 concluída (Advanced RAG + Modular RAG + LangFuse) | **Stack:** OpenSearch 3.x · Neural Search Plugin · ML Commons Plugin · BGE-M3 · Neural Sparse · RRF · Search Pipelines · vLLM · RAGAS
+**Aula:** 4 de 12 | **Carga:** 5h | **Proporção:** 30% teoria / 70% prática
+**Pré-requisito:** Aula 3 concluída (Advanced RAG + Modular RAG + LangFuse) | **Stack:** OpenSearch 3.x · Neural Search Plugin · ML Commons Plugin · Ollama BGE-M3 (connector) · SPLADE Multilíngue (pré-treinado) · RRF · Search Pipelines · Groq + Ollama LLM · RAGAS · LangFuse
 
 ---
 
@@ -19,20 +19,22 @@ aula4/
 │   └── AULA4_TEORIA.md                                  ← Material teórico completo (7 seções)
 │
 ├── labs/
-│   ├── LAB1_OpenSearch_Hybrid_Index.ipynb               ← Criar índice kNN + BM25 no OpenSearch 3.x
-│   ├── LAB2_Search_Pipeline_RRF.ipynb                   ← Configurar search pipeline com RRF
-│   ├── LAB3_Hybrid_Search_Juridico.ipynb                ← Busca híbrida em corpus jurídico real
-│   ├── LAB4_Neural_Sparse_Search.ipynb                  ← Neural Sparse Search com SPLADE
-│   ├── LAB5_Contextual_Retrieval.ipynb                  ← #T09: pré-processar chunks com vLLM + medir RAGAS antes/depois
-│   └── LAB6_LangFuse_Dashboard_Comparativo.ipynb        ← Dashboard comparativo BM25 vs Dense vs Hybrid
+│   ├── LAB1_OpenSearch_Hybrid_Index.ipynb               ← Connector Ollama BGE-M3 (ML Commons) + ingest pipeline + índice kNN/BM25 sobre 1.100 acórdãos TCU 2026
+│   ├── LAB2_Search_Pipeline_RRF.ipynb                   ← Pipelines RRF e Min-Max (busca híbrida com neural query server-side)
+│   ├── LAB3_Hybrid_Search_Juridico.ipynb                ← Avaliação MRR/Recall/NDCG sobre 20 queries TCU 2026, registro no LangFuse
+│   ├── LAB4_Neural_Sparse_Search.ipynb                  ← SPLADE multilíngue pré-treinado (amazon/neural-sparse/opensearch-neural-sparse-encoding-multilingual-v1)
+│   ├── LAB5_Contextual_Retrieval.ipynb                  ← #T09: pré-processar chunks com Groq (fallback Ollama), medir Context Precision/Recall (RAGAS)
+│   └── LAB6_LangFuse_Dashboard_Comparativo.ipynb        ← Dashboard 5-vias: BM25 vs Dense vs Hybrid RRF vs Neural Sparse vs Hybrid+Contextual; Δ vs BM25 e RAGAS
 │
 ├── exemplos/
-│   ├── EXEMPLO1_Hybrid_Query_Basico.ipynb               ← Consulta híbrida mínima (referência rápida)
+│   ├── EXEMPLO1_Hybrid_Query_Basico.ipynb               ← Referência rápida: hybrid query com BGE-M3 via Ollama (dim=1024)
 │   ├── EXEMPLO2_RRF_vs_Normalization.ipynb              ← Comparação RRF × min-max normalization
-│   └── EXEMPLO3_Conversational_RAG_Pipeline.ipynb       ← Conversational Search com RAG pipeline (referência extra)
+│   └── EXEMPLO3_Conversational_RAG_Pipeline.ipynb       ← Conversational RAG com Groq + Ollama BGE-M3
 │
 └── datasets/
-    └── corpus_juridico_aula4.json                       ← 20 docs + 15 queries com relevância anotada
+    ├── corpus_juridico_aula4.json                       ← Corpus legado: 20 docs (compatibilidade)
+    ├── corpus_juridico_aula4_v2.json                    ← Corpus enriquecido: 1.100 acórdãos TCU 2026 (extraídos de aula2/datasets/acordao-completo-2026.csv)
+    └── queries_avaliacao_aula4.json                     ← 20 queries com ground-truth (top-5 docs relevantes por query)
 ```
 
 ---
@@ -43,15 +45,15 @@ aula4/
 |---|---|---|---|---|
 | **1. Revisão + Motivação** | 15 min | Teoria | Limitações da busca puramente vetorial ou BM25 em textos jurídicos | `teoria/AULA4_TEORIA.md §1` |
 | **2. Hybrid Search — Arquitetura** | 30 min | Teoria | kNN dense + BM25 sparse, score fusion, search pipelines | `teoria/AULA4_TEORIA.md §2–3` |
-| **3. LAB 1 — Índice Híbrido** | 40 min | Prática | Criar índice com campo kNN (BGE-M3) + campo text (BM25) no OpenSearch | `labs/LAB1_OpenSearch_Hybrid_Index.ipynb` |
+| **3. LAB 1 — Índice Híbrido + Connector Ollama** | 45 min | Prática | Connector ML Commons → Ollama BGE-M3, ingest pipeline e índice (1024d) | `labs/LAB1_OpenSearch_Hybrid_Index.ipynb` |
 | **4. RRF e Score Fusion — Teoria** | 20 min | Teoria | Reciprocal Rank Fusion, min-max normalization, arithmetic combination | `teoria/AULA4_TEORIA.md §4` |
-| **5. LAB 2 — Search Pipeline RRF** | 40 min | Prática | Criar e ativar search pipeline com normalization processor + RRF | `labs/LAB2_Search_Pipeline_RRF.ipynb` |
-| **6. LAB 3 — Busca Híbrida Jurídica** | 40 min | Prática | Executar hybrid search em corpus jurídico, comparar MRR e Recall | `labs/LAB3_Hybrid_Search_Juridico.ipynb` |
+| **5. LAB 2 — Search Pipeline RRF/Min-Max** | 40 min | Prática | Criar/ativar search pipelines com normalization processor | `labs/LAB2_Search_Pipeline_RRF.ipynb` |
+| **6. LAB 3 — Busca Híbrida Jurídica + LangFuse** | 40 min | Prática | Avaliar MRR/Recall/NDCG em 20 queries TCU 2026 + dashboard LangFuse | `labs/LAB3_Hybrid_Search_Juridico.ipynb` |
 | **7. Neural Sparse — Teoria** | 15 min | Teoria | SPLADE, sparse neural vectors, eficiência vs. dense | `teoria/AULA4_TEORIA.md §5` |
-| **8. LAB 4 — Neural Sparse** | 30 min | Prática | Indexar com modelo SPLADE, executar consultas neural sparse | `labs/LAB4_Neural_Sparse_Search.ipynb` |
-| **9. Contextual Retrieval — Teoria** | 15 min | Teoria | Pré-processamento de chunks com contexto situacional (vLLM), impacto no Context Precision | `teoria/AULA4_TEORIA.md §6` |
-| **10. LAB 5 — Contextual Retrieval** | 45 min | Prática | Pré-processar 100 chunks com vLLM adicionando contexto situacional, re-indexar, medir Context Precision (RAGAS) antes/depois | `labs/LAB5_Contextual_Retrieval.ipynb` |
-| **11. LAB 6 — Dashboard LangFuse** | 30 min | Prática | Dashboard comparativo de latência e qualidade entre BM25, dense e hybrid com LangFuse | `labs/LAB6_LangFuse_Dashboard_Comparativo.ipynb` |
+| **8. LAB 4 — Neural Sparse Multilíngue** | 30 min | Prática | Registrar modelo pré-treinado, ingest/search via neural_sparse | `labs/LAB4_Neural_Sparse_Search.ipynb` |
+| **9. Contextual Retrieval — Teoria** | 15 min | Teoria | Pré-processamento de chunks com contexto, impacto em Context Precision | `teoria/AULA4_TEORIA.md §6` |
+| **10. LAB 5 — Contextual Retrieval c/ Groq** | 45 min | Prática | Enriquecer 100 chunks via Groq (fallback Ollama), medir RAGAS antes/depois | `labs/LAB5_Contextual_Retrieval.ipynb` |
+| **11. LAB 6 — Dashboard 5-vias** | 30 min | Prática | Comparativo BM25 vs Dense vs Hybrid vs Neural Sparse vs Hybrid+Contextual | `labs/LAB6_LangFuse_Dashboard_Comparativo.ipynb` |
 
 ---
 
@@ -59,13 +61,13 @@ aula4/
 
 Ao final desta aula, o aluno será capaz de:
 
-1. **Explicar** a diferença entre busca densa (kNN), esparsa (BM25) e híbrida em contexto jurídico
-2. **Criar índices híbridos** no OpenSearch 3.x com Neural Search Plugin + ML Commons Plugin
-3. **Configurar search pipelines** com normalization processor e RRF (Reciprocal Rank Fusion)
+1. **Explicar** a diferença entre busca densa (kNN), esparsa (BM25 e neural sparse) e híbrida em contexto jurídico
+2. **Conectar o OpenSearch ao Ollama** via Connector ML Commons e indexar com **embeddings server-side** (BGE-M3, dim=1024)
+3. **Configurar search pipelines** com normalization processor e RRF
 4. **Comparar estratégias de fusão de scores** (RRF vs. min-max normalization) com métricas objetivas
-5. **Implementar Neural Sparse Search** com modelos SPLADE no OpenSearch 3.x
-6. **Aplicar Contextual Retrieval (#T09)** — enriquecer chunks com contexto via vLLM e medir impacto via RAGAS
-7. **Monitorar e comparar estratégias de busca** com dashboard LangFuse
+5. **Implementar Neural Sparse Search** com o modelo pré-treinado multilíngue `opensearch-neural-sparse-encoding-multilingual-v1`
+6. **Aplicar Contextual Retrieval (#T09)** — enriquecer chunks via Groq (fallback Ollama) e medir impacto via RAGAS
+7. **Quantificar a melhoria do RAG** com cada técnica e registrar tudo no **LangFuse** (Scores API)
 
 ---
 
@@ -73,17 +75,15 @@ Ao final desta aula, o aluno será capaz de:
 
 | Componente | Ferramenta | Papel no Pipeline |
 |---|---|---|
-| Motor de busca | **OpenSearch 3.x** | Índice híbrido (kNN + BM25) + search pipelines |
-| Plugin Neural | **Neural Search Plugin** | Integração de modelos de embedding diretamente no OpenSearch |
-| Plugin ML | **ML Commons Plugin** | Registro e deploy de modelos de embedding/sparse no cluster |
-| Embeddings densos | **BGE-M3** (BAAI, dim=1024) | Vetorização multilíngue para kNN |
-| Neural Sparse | **opensearch-neural-sparse-encoding-doc-v2** | Sparse vectors para busca esparsa neural |
-| Score Fusion | **RRF + min-max normalization** | Combinação de scores vetorial + lexical |
-| LLM | **Llama 3.1 8B Instruct** | Pré-processamento de chunks (Contextual Retrieval) + geração |
-| Servidor LLM | **vLLM** (PagedAttention) | API OpenAI-compatible em `localhost:8000/v1` |
-| Orquestração | **LangChain LCEL + OpenSearch Python SDK** | Pipeline RAG modular e composável |
-| Avaliação | **RAGAS** | Context Precision antes/depois do Contextual Retrieval |
-| Observabilidade | **LangFuse** | Rastreamento de queries, latência e dashboard comparativo |
+| Motor de busca | **OpenSearch 3.x** | Índice híbrido (kNN + BM25), neural search, neural_sparse, search pipelines |
+| Plugin Neural | **Neural Search Plugin** | Queries `neural` e `neural_sparse` integradas a modelos do ML Commons |
+| Plugin ML | **ML Commons Plugin** | Connector remoto (Ollama) + modelo pré-treinado SPLADE multilíngue |
+| Embeddings densos | **Ollama `bge-m3`** (dim=1024) | Embeddings multilíngues via connector remoto (server-side) |
+| Neural Sparse | **`amazon/neural-sparse/opensearch-neural-sparse-encoding-multilingual-v1`** | Sparse encoding via ingest/search pipelines `neural_sparse` |
+| Score Fusion | **RRF + min-max normalization** | Combinação de scores BM25 + neural (search pipelines) |
+| LLM | **Groq `llama-3.1-8b-instant`** (primário) · **Ollama `llama3.2:3b`** (fallback) | Contextualização de chunks no LAB5; geração no exemplo conversacional |
+| Avaliação | **RAGAS** | Context Precision/Recall antes/depois do Contextual Retrieval |
+| Observabilidade | **LangFuse** | Scores agregados, spans por query/estratégia, Δ vs BM25, dashboards |
 
 ---
 
@@ -96,25 +96,25 @@ Ao final desta aula, o aluno será capaz de:
 | **ID** | #T04 |
 | **Categoria** | Retrieval Avançado |
 | **Subtítulo** | Fusão de busca vetorial e lexical |
-| **Descrição** | Combina busca densa (embeddings + kNN) e busca esparsa (BM25/TF-IDF) numa única query. Os scores são normalizados e fundidos via RRF ou arithmetic combination. Captura tanto semântica quanto match exato de termos — essencial em textos jurídicos com terminologia técnica. |
-| **Aplicabilidades** | Pesquisa em legislação, jurisprudência e doutrina; sistemas de compliance; investigação policial com linguagem técnica; portais de e-gov |
+| **Descrição** | Combina busca densa (BGE-M3 via Ollama connector) e busca esparsa (BM25/TF-IDF). Scores normalizados e fundidos via RRF ou arithmetic combination. Captura tanto semântica quanto match exato — essencial em textos jurídicos com terminologia técnica. |
+| **Aplicabilidades** | Pesquisa em legislação, jurisprudência e doutrina; sistemas de compliance; investigação policial; portais de e-gov; acórdãos TCU |
 | **Vantagens** | Melhor Recall e MRR que abordagem única; robusto para variações de vocabulário jurídico |
-| **Limitações** | Latência maior; requer tuning de pesos alpha; dependência de infraestrutura OpenSearch |
-| **Lab** | LAB1 (índice) + LAB2 (pipeline RRF) + LAB3 (avaliação jurídica) |
-| **Referência** | CHEN et al. (2022). arXiv:2210.11934; OpenSearch Docs, 2024. |
+| **Limitações** | Latência maior; requer tuning de pesos; dependência de infraestrutura |
+| **Lab** | LAB1 (índice + connector) + LAB2 (pipeline RRF) + LAB3 (avaliação) |
+| **Referência** | CHEN et al. (2022). arXiv:2210.11934; OpenSearch Docs, 2026. |
 
-### Ficha — Neural Sparse Search (OpenSearch 3.x Extra)
+### Ficha — Neural Sparse Search (SPLADE Multilíngue)
 
 | Campo | Conteúdo |
 |---|---|
 | **Categoria** | Retrieval Avançado |
 | **Subtítulo** | Representação esparsa neural (SPLADE) |
-| **Descrição** | Usa modelos neurais (SPLADE) para gerar vetores esparsos de alta dimensão que combinam a interpretabilidade do BM25 com a compreensão semântica dos embeddings densos. Permite busca eficiente em índices invertidos com compreensão de sinônimos e contexto. No OpenSearch 3.x é habilitado via ML Commons Plugin. |
-| **Aplicabilidades** | Pesquisa em grandes corpora legislativos; busca de precedentes com variação terminológica; integração com sistemas legacy baseados em índices invertidos |
-| **Vantagens** | Interpretabilidade (termos com pesos); eficiência computacional; qualidade próxima ao dense retrieval |
-| **Limitações** | Requer modelo de sparse encoding dedicado; menos maduro que dense retrieval em português |
-| **Lab** | LAB4 (Neural Sparse Search com SPLADE) |
-| **Referência** | FORMAL et al. (2021). SPLADE. arXiv:2107.05720. |
+| **Descrição** | Usa o modelo pré-treinado `opensearch-neural-sparse-encoding-multilingual-v1` no ML Commons para gerar vetores esparsos token→peso, indexados como `rank_features`. Combina interpretabilidade do BM25 com compreensão semântica dos transformers. |
+| **Aplicabilidades** | Pesquisa em grandes corpora legislativos; busca de precedentes; integração com sistemas legacy de índice invertido |
+| **Vantagens** | Interpretabilidade (termos com pesos); eficiência computacional; qualidade próxima ao dense retrieval; multilíngue out-of-the-box |
+| **Limitações** | Ingestão mais lenta (encoding pesado); modelo único por idioma |
+| **Lab** | LAB4 (registro do modelo + ingest/search via `neural_sparse`) |
+| **Referência** | FORMAL et al. (2021). SPLADE. arXiv:2107.05720; OpenSearch Docs (Neural Sparse with Pipelines). |
 
 ### Ficha T09 — Contextual Retrieval
 
@@ -122,13 +122,21 @@ Ao final desta aula, o aluno será capaz de:
 |---|---|
 | **ID** | #T09 |
 | **Categoria** | Retrieval Avançado |
-| **Subtítulo** | Enriquecimento contextual de chunks para indexação |
-| **Descrição** | Antes da indexação, cada chunk é enriquecido com um trecho de contexto situacional gerado por um LLM (vLLM). O prompt descreve o papel do chunk no documento completo. O chunk enriquecido é então reindexado, melhorando Context Precision e Recall na recuperação. Desenvolvido pela Anthropic (2024). |
-| **Aplicabilidades** | Acórdãos extensos onde chunks isolados perdem referência ao caso; laudos periciais com seções interdependentes; procedimentos policiais multi-fase |
-| **Vantagens** | Melhora significativa em Context Precision (~35% segundo Anthropic); compatível com qualquer vector store; sem mudança na arquitetura de retrieval |
-| **Limitações** | Custo de pré-processamento (1 chamada LLM por chunk); latência na ingestão; depende de qualidade do prompt de contextualização |
-| **Lab** | LAB5 (pré-processar 100 chunks, re-indexar, medir Context Precision RAGAS antes/depois) |
-| **Referência** | ANTHROPIC. *Introducing Contextual Retrieval*. Blog, 2024. Disponível em: <https://www.anthropic.com/news/contextual-retrieval>. |
+| **Subtítulo** | Enriquecimento contextual de chunks via Groq + Ollama |
+| **Descrição** | Antes da indexação, cada chunk é enriquecido com um trecho de contexto situacional gerado pelo Groq `llama-3.1-8b-instant` (fallback Ollama `llama3.2:3b`). O prompt descreve o papel do chunk no acórdão TCU. O chunk enriquecido é reindexado, melhorando Context Precision/Recall (RAGAS). |
+| **Aplicabilidades** | Acórdãos TCU/STJ extensos; laudos periciais multi-fase; procedimentos policiais |
+| **Vantagens** | Melhora significativa em Context Precision; sem mudança na arquitetura de retrieval; Groq oferece latência ~10× menor que vLLM em CPU |
+| **Limitações** | Custo de pré-processamento (1 chamada LLM por chunk); rate limit do Groq (mitigado pelo fallback automático para Ollama) |
+| **Lab** | LAB5 (100 chunks, RAGAS antes/depois, scores no LangFuse) |
+| **Referência** | ANTHROPIC. *Introducing Contextual Retrieval*. 2024. <https://www.anthropic.com/news/contextual-retrieval>. |
+
+---
+
+## Datasets da Aula 4
+
+- **`corpus_juridico_aula4_v2.json`** (4,4 MB): 1.100 acórdãos do TCU de 2026 extraídos de `aula2/datasets/acordao-completo-2026.csv`. Campos: `id`, `tipo`, `titulo`, `conteudo` (sumário + assunto + acórdão + relatório, limpos de HTML), `metadata` (numAcordao, ano, relator, colegiado, dataSessao, interessados, entidade).
+- **`queries_avaliacao_aula4.json`**: 20 queries temáticas com 4–5 documentos relevantes por query (ground-truth derivado de overlap de keywords no conteúdo).
+- **`corpus_juridico_aula4.json`** (legado): 20 docs sintéticos — mantido para retrocompatibilidade. Os LABs preferem `_v2` automaticamente.
 
 ---
 
@@ -138,31 +146,43 @@ Ver `AVALIACAO_AULA4.md` para rubricas completas.
 
 | Entregável | Peso | Lab |
 |---|---|---|
-| Índice híbrido funcional no OpenSearch 3.x (kNN + BM25) | 20% | LAB1 |
-| Search pipeline RRF configurado e testado | 20% | LAB2 |
-| Análise comparativa: hybrid vs. single-mode com MRR/Recall | 20% | LAB3 |
-| Neural Sparse Search indexado e consultado | 10% | LAB4 |
-| Contextual Retrieval implementado com melhoria RAGAS comprovada | 20% | LAB5 |
-| Dashboard LangFuse comparativo BM25/dense/hybrid | 10% | LAB6 |
+| Índice híbrido funcional + connector Ollama BGE-M3 | 20% | LAB1 |
+| Search pipelines RRF e Min-Max configurados | 15% | LAB2 |
+| Análise comparativa MRR/Recall/NDCG no LangFuse | 20% | LAB3 |
+| Neural Sparse Search com modelo pré-treinado funcional | 15% | LAB4 |
+| Contextual Retrieval com Δ RAGAS positivo registrado | 20% | LAB5 |
+| Dashboard 5-vias com melhoria do RAG vs BM25 (Δ %) | 10% | LAB6 |
 
 ---
 
 ## Referências Bibliográficas (ABNT)
 
+ANTHROPIC. **Introducing Contextual Retrieval**. Blog Anthropic, 2024. Disponível em: <https://www.anthropic.com/news/contextual-retrieval>.
+
+CHEN, J. et al. **BGE M3-Embedding: Multi-Lingual, Multi-Functionality, Multi-Granularity Text Embeddings**. arXiv:2309.07597, 2024.
+
 CHEN, Y. et al. **Out-of-Domain Semantics to the Rescue! Zero-Shot Hybrid Retrieval Models**. arXiv:2210.11934, 2022.
 
-FORMAL, T. et al. **SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking**. arXiv:2107.05720, 2021.
-
-LIN, J.; MA, X. **A Few Brief Notes on DeepImpact, COIL, and a Conceptual Framework for Information Retrieval Techniques**. arXiv:2106.14807, 2021.
-
-OPENSEARCH PROJECT. **Hybrid Search**. Disponível em: <https://docs.opensearch.org/latest/vector-search/ai-search/hybrid-search/>. Acesso em: abr. 2026.
-
-OPENSEARCH PROJECT. **Neural Sparse Search**. Disponível em: <https://docs.opensearch.org/latest/vector-search/ai-search/neural-sparse-search/>. Acesso em: abr. 2026.
-
-ANTHROPIC. **Introducing Contextual Retrieval**. Blog Anthropic, 2024. Disponível em: <https://www.anthropic.com/news/contextual-retrieval>. Acesso em: abr. 2026.
+CORMACK, G. V.; CLARKE, C. L. A.; BUETTCHER, S. **Reciprocal Rank Fusion Outperforms Condorcet**. SIGIR Forum, v. 43, n. 1, p. 1-8, 2009.
 
 ES, S. et al. **RAGAS: Automated Evaluation of Retrieval Augmented Generation**. arXiv:2309.15217, 2023.
 
-ROBERTSON, S.; ZARAGOZA, H. **The Probabilistic Relevance Framework: BM25 and Beyond**. *Foundations and Trends in Information Retrieval*, v. 3, n. 4, p. 333-389, 2009.
+FORMAL, T. et al. **SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking**. arXiv:2107.05720, 2021.
 
-CHEN, J. et al. **BGE M3-Embedding: Multi-Lingual, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation**. arXiv:2309.07597, 2024.
+GROQ INC. **Groq API Documentation**. Disponível em: <https://console.groq.com/docs>.
+
+LANGFUSE. **Scores API Documentation**. Disponível em: <https://langfuse.com/docs/scores>.
+
+LOMBARDO, A. **Integrating Ollama and OpenSearch for Vector Indexing Using Models from Ollama**. LinkedIn Pulse, 2024. Disponível em: <https://www.linkedin.com/pulse/integrating-ollama-opensearch-vector-indexing-using-models-lombardo-anmie/>.
+
+OLLAMA. **BGE-M3 Model**. Disponível em: <https://ollama.com/library/bge-m3>.
+
+OPENSEARCH PROJECT. **Hybrid Search**. 3.0 Docs. Disponível em: <https://docs.opensearch.org/3.0/vector-search/ai-search/hybrid-search/>.
+
+OPENSEARCH PROJECT. **Neural Sparse Search**. 3.0 Docs. Disponível em: <https://docs.opensearch.org/3.0/vector-search/ai-search/neural-sparse-search/>.
+
+OPENSEARCH PROJECT. **Neural Sparse Search Using Pipelines**. 3.0 Docs. Disponível em: <https://docs.opensearch.org/3.0/vector-search/ai-search/neural-sparse-with-pipelines/>.
+
+OPENSEARCH PROJECT. **Connecting to Externally Hosted Models**. 3.0 Docs. Disponível em: <https://docs.opensearch.org/3.0/ml-commons-plugin/remote-models/index/>.
+
+TRIBUNAL DE CONTAS DA UNIÃO (TCU). **Acórdãos 2026 — base completa**. Brasília: TCU, 2026.
