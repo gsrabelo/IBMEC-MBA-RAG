@@ -1,0 +1,31 @@
+# Dependencias dos scripts da Aula 6 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30            # inclui HierarchicalDocumentSplitter + AutoMergingRetriever
+opensearch-haystack>=3.0
+ollama-haystack>=4.0
+openai>=1.40                 # cliente para a Groq
+
+# --- RAPTOR (clustering + reducao dimensional) ---
+scikit-learn>=1.5
+umap-learn>=0.5
+numpy>=1.26
+
+# --- Comparacao com RAGAS (script 04) ---
+ragas>=0.2
+datasets>=2.0
+langchain-groq>=1.0
+langchain-ollama>=1.0
+langchain-core>=0.3
+# RAGAS importa langchain_community.chat_models.vertexai (existe no 0.4.1, removido no 0.4.2):
+langchain-community==0.4.1
+
+# --- Observabilidade (script 05) ---
+langfuse>=4.0
+langfuse-haystack>=1.0
+
+# --- Utilidades ---
+python-dotenv>=1.0
+requests>=2.31

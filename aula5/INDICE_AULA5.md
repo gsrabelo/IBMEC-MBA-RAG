@@ -2,9 +2,9 @@
 ## Medindo e Melhorando a Qualidade do Pipeline RAG Jurídico
 ### MBA em RAG & CAG Aplicados a Direito e Segurança Pública
 
-**Aula:** 5 de 12 | **Carga:** 5h | **Proporção:** 30% teoria / 70% prática  
-**Pré-requisito:** Aulas 1–4 concluídas (Naive RAG, Advanced RAG, Hybrid Search, Contextual Retrieval)  
-**Stack:** RAGAS · DeepEval · LangFuse (Scores API) · Pandas · Matplotlib · vLLM · OpenSearch 3.x
+**Aula:** 5 de 12 | **Carga:** 5h | **Proporção:** 30% teoria / 70% prática
+**Pré-requisito:** Aulas 1–4 concluídas (Naive RAG, Advanced RAG, Hybrid Search, Contextual Retrieval)
+**Stack:** RAGAS · DeepEval · LangFuse · Pandas · Matplotlib · **Groq** (LLM) · **Ollama** (embeddings BGE-M3) · **OpenSearch 3.x** (vector store)
 
 ---
 
@@ -17,23 +17,37 @@ aula5/
 ├── AVALIACAO_AULA5.md                                     ← Rubricas e critérios (professor)
 │
 ├── teoria/
-│   └── AULA5_TEORIA.md                                    ← Material teórico completo (8 seções)
+│   └── AULA5_TEORIA.md                                    ← Material teórico (8 seções)
 │
 ├── labs/
-│   ├── LAB1_Dataset_Avaliacao_GroundTruth.ipynb           ← Construir 50 pares query+resposta+contexto
+│   ├── LAB1_Dataset_Avaliacao_GroundTruth.ipynb           ← Gera 50 pares Naive RAG → JSON/CSV
 │   ├── LAB2_RAGAS_Baseline_Naive_RAG.ipynb                ← 4 métricas RAGAS no Naive RAG (#T01)
-│   ├── LAB3_RAGAS_LangFuse_Scores_API.ipynb               ← Integração RAGAS → LangFuse automático
-│   ├── LAB4_DeepEval_Testes_Unitarios.ipynb               ← 5 testes unitários DeepEval no pipeline
-│   ├── LAB5_Dashboard_Naive_vs_Advanced.ipynb             ← Comparação Naive RAG vs Advanced RAG
-│   └── LAB6_Analise_Erros_Faithfulness.ipynb              ← Diagnóstico de queries com Faithfulness < 0.7
+│   ├── LAB3_RAGAS_LangFuse_Scores_API.ipynb               ← RAGAS por par → LangFuse Scores API (+ @observe)
+│   ├── LAB4_DeepEval_Testes_Unitarios.ipynb               ← 5 testes DeepEval (Faith/AnsRel/Hallu/Tox/Bias)
+│   ├── LAB5_Dashboard_Naive_vs_Advanced.ipynb             ← Naive vs Advanced (Hybrid+Rerank) — gráficos
+│   ├── LAB6_Analise_Erros_Faithfulness.ipynb              ← Diagnóstico + correção de Faith<0.70
+│   └── LAB7_LangFuse_Avaliacao_Continua.ipynb             ← Datasets, Runs, Multi-Scores, Sessions, Annotation, Drift, Cron
 │
-├── exemplos/
-│   ├── EXEMPLO1_RAGAS_Minimo.ipynb                        ← Avaliação RAGAS em 5 linhas (referência rápida)
-│   └── EXEMPLO2_DeepEval_Basico.ipynb                     ← Teste DeepEval mínimo (referência rápida)
+├── exemplos/   (atualmente vazio — material em laboratórios)
 │
 └── datasets/
-    └── corpus_avaliacao_aula5.json                        ← 50 pares QA com ground-truth jurídico
+    └── corpus_avaliacao_aula5.json                        ← 50 pares QA jurídicos com ground-truth
 ```
+
+---
+
+## Stack Tecnológica (alinhada à Aula 3+)
+
+| Componente | Ferramenta | Papel |
+|---|---|---|
+| LLM gerador & judge | **Groq Cloud** `llama-3.1-8b-instant` via `langchain_groq.ChatGroq` | Geração RAG e LLM judge para RAGAS/DeepEval |
+| LLM fallback | **Ollama** `llama3.2:3b` via `langchain_ollama.ChatOllama` | Substituto automático quando Groq indisponível |
+| Embeddings | **Ollama** `bge-m3` (dim=1024) via `langchain_ollama.OllamaEmbeddings` | Vetorização para kNN no OpenSearch |
+| Vector Store | **OpenSearch 3.x** (índice `corpus_juridico_aula4` da Aula 4) | Recuperação kNN + BM25 (hybrid) |
+| Framework de avaliação | **RAGAS** (≥0.1.16) + `LangchainLLMWrapper` / `LangchainEmbeddingsWrapper` | 4 métricas RAG |
+| Testes unitários LLM | **DeepEval** (≥0.21) + wrapper custom `DeepEvalBaseLLM` | 5 métricas: Faith/AnsRel/Hallu/Tox/Bias |
+| Observabilidade | **LangFuse** (Scores API + `@observe`) | Traces + scores por consulta |
+| Manipulação/visualização | **Pandas / Matplotlib / Seaborn** | Dashboards e CSVs |
 
 ---
 
@@ -41,45 +55,37 @@ aula5/
 
 | Bloco | Duração | Tipo | Conteúdo | Arquivo |
 |---|---|---|---|---|
-| **1. Por que avaliar RAG?** | 20 min | Teoria | O problema da "alucinação silenciosa", métricas clássicas vs. métricas LLM-as-judge | `teoria/AULA5_TEORIA.md §1–2` |
-| **2. Framework RAGAS** | 25 min | Teoria | 4 métricas, pipeline de avaliação, metas mínimas do syllabus | `teoria/AULA5_TEORIA.md §3–4` |
-| **3. LAB 1 — Ground-Truth** | 40 min | Prática | Construir dataset de 50 pares QA jurídicos; formato RAGAS-compatible | `labs/LAB1_Dataset_Avaliacao_GroundTruth.ipynb` |
-| **4. LAB 2 — RAGAS Baseline** | 45 min | Prática | Calcular Faithfulness, Answer Relevancy, Context Recall, Context Precision no Naive RAG | `labs/LAB2_RAGAS_Baseline_Naive_RAG.ipynb` |
-| **5. LangFuse Scores API** | 15 min | Teoria | Scores API, integração automática, dashboards de qualidade | `teoria/AULA5_TEORIA.md §5` |
-| **6. LAB 3 — RAGAS + LangFuse** | 30 min | Prática | Pipeline que calcula RAGAS e envia scores ao LangFuse automaticamente | `labs/LAB3_RAGAS_LangFuse_Scores_API.ipynb` |
-| **7. DeepEval** | 15 min | Teoria | Testes unitários de LLM, métricas disponíveis, integração com pytest | `teoria/AULA5_TEORIA.md §6` |
-| **8. LAB 4 — DeepEval** | 30 min | Prática | 5 testes unitários: Faithfulness, AnswerRelevancy, Hallucination, Toxicity, Bias | `labs/LAB4_DeepEval_Testes_Unitarios.ipynb` |
-| **9. LAB 5 — Dashboard** | 30 min | Prática | Comparação Naive RAG vs Advanced RAG nas 4 métricas RAGAS + gráficos | `labs/LAB5_Dashboard_Naive_vs_Advanced.ipynb` |
-| **10. LAB 6 — Análise de Erros** | 25 min | Prática | Identificar queries com Faithfulness < 0.7, diagnosticar causas, propor correções | `labs/LAB6_Analise_Erros_Faithfulness.ipynb` |
+| **1. Por que avaliar RAG?** | 20 min | Teoria | Alucinação silenciosa, métricas clássicas vs. LLM-as-judge | `teoria/AULA5_TEORIA.md §1–2` |
+| **2. Framework RAGAS** | 25 min | Teoria | 4 métricas, pipeline, metas mínimas | `teoria/AULA5_TEORIA.md §3–4` |
+| **3. LAB 1 — Ground-Truth** | 40 min | Prática | Pipeline Naive RAG (Groq+Ollama+OpenSearch) gera dataset de 50 pares | `labs/LAB1_Dataset_Avaliacao_GroundTruth.ipynb` |
+| **4. LAB 2 — RAGAS Baseline** | 45 min | Prática | 4 métricas RAGAS no Naive (LLM judge: Groq) | `labs/LAB2_RAGAS_Baseline_Naive_RAG.ipynb` |
+| **5. LangFuse Scores API** | 15 min | Teoria | Scores API, `@observe`, quality gate | `teoria/AULA5_TEORIA.md §5` |
+| **6. LAB 3 — RAGAS + LangFuse** | 30 min | Prática | Pipeline calcula RAGAS por par e envia ao LangFuse | `labs/LAB3_RAGAS_LangFuse_Scores_API.ipynb` |
+| **7. DeepEval** | 15 min | Teoria | Testes unitários LLM, integração com pytest | `teoria/AULA5_TEORIA.md §6` |
+| **8. LAB 4 — DeepEval** | 30 min | Prática | 5 testes (Faithfulness, AnswerRelevancy, Hallucination, Toxicity, Bias) | `labs/LAB4_DeepEval_Testes_Unitarios.ipynb` |
+| **9. LAB 5 — Dashboard** | 30 min | Prática | Naive vs Advanced (Hybrid+Rerank) com Groq | `labs/LAB5_Dashboard_Naive_vs_Advanced.ipynb` |
+| **10. LAB 6 — Análise de Erros** | 25 min | Prática | Diagnóstico + 3 correções para Faith<0.70 | `labs/LAB6_Analise_Erros_Faithfulness.ipynb` |
+| **11. LAB 7 — Avaliação Contínua com LangFuse** | 30 min | Prática | Datasets versionados, Dataset Runs, Multi-Scores (NUMERIC/CATEG/BOOL), Sessions, Annotation Queue, Prompt Mgmt, Drift Detection, `@observe`+CallbackHandler, Cron diário | `labs/LAB7_LangFuse_Avaliacao_Continua.ipynb` |
 
 ---
 
-## Objetivos de Aprendizagem (conforme ementa)
+## Variáveis `.env` (padrão do curso)
 
-Ao final desta aula, o aluno será capaz de:
-
-1. **Explicar** por que métricas tradicionais (BLEU, ROUGE) são insuficientes para avaliar sistemas RAG jurídicos
-2. **Construir** um dataset de avaliação com ground-truth a partir de documentos jurídicos reais
-3. **Calcular** as 4 métricas RAGAS (Faithfulness, Answer Relevancy, Context Recall, Context Precision) em qualquer pipeline RAG
-4. **Integrar** avaliação RAGAS com LangFuse Scores API para monitoração contínua em produção
-5. **Escrever testes unitários** com DeepEval para validar comportamento do pipeline RAG
-6. **Comparar** pipelines RAG objetivamente com dashboards de qualidade
-7. **Diagnosticar** falhas de Faithfulness e propor estratégias de mitigação
-
----
-
-## Stack Tecnológico
-
-| Componente | Ferramenta | Papel |
-|---|---|---|
-| Framework de avaliação | **RAGAS** (≥0.1) | Cálculo das 4 métricas de qualidade RAG |
-| Testes unitários LLM | **DeepEval** (≥0.21) | Assertions de Faithfulness, Hallucination, Toxicity, Bias |
-| Observabilidade | **LangFuse** (Scores API) | Armazenamento e visualização de métricas de qualidade |
-| LLM judge | **Llama 3.1 8B Instruct via vLLM** | LLM-as-judge para avaliação Faithfulness e Relevância |
-| Vector Store | **OpenSearch 3.x** | Recuperação de contexto para avaliação |
-| Orquestração | **LangChain LCEL** | Pipeline RAG avaliado |
-| Manipulação de dados | **Pandas** | Análise e exportação de resultados |
-| Visualização | **Matplotlib / Seaborn** | Dashboards comparativos |
+```
+GROQ_API_KEY=gsk_...
+GROQ_LLM_MODEL=llama-3.1-8b-instant
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_LLM_MODEL=llama3.2:3b
+OLLAMA_EMBED_MODEL=bge-m3
+OPENSEARCH_HOST=localhost
+OPENSEARCH_PORT=9200
+OPENSEARCH_USER=admin
+OPENSEARCH_PASSWORD=admin
+INDEX_NAME=corpus_juridico_aula4
+LANGFUSE_HOST=http://localhost:3000
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+```
 
 ---
 
@@ -87,74 +93,62 @@ Ao final desta aula, o aluno será capaz de:
 
 | Métrica | Meta Mínima | Descrição |
 |---|---|---|
-| **Faithfulness** | ≥ 0.80 | Respostas fundamentadas nos contextos recuperados (sem alucinação) |
-| **Answer Relevancy** | ≥ 0.75 | Resposta pertinente à pergunta feita |
+| **Faithfulness** | ≥ 0.80 | Respostas fundamentadas nos contextos (sem alucinação) |
+| **Answer Relevancy** | ≥ 0.75 | Resposta pertinente à pergunta |
 | **Context Recall** | ≥ 0.70 | Ground-truth coberto pelos contextos recuperados |
 | **Context Precision** | ≥ 0.70 | Contextos recuperados são realmente relevantes |
 
-> **Por que essas metas?** No domínio jurídico, Faithfulness abaixo de 0.80 indica risco de alucinação sobre artigos de lei ou jurisprudência — o que pode causar dano real ao usuário.
-
 ---
 
-## Fichas de Técnicas — Esta Aula
+## Objetivos de Aprendizagem
 
-### Ficha — RAGAS (Framework de Avaliação)
-
-| Campo | Conteúdo |
-|---|---|
-| **Categoria** | Avaliação de Sistemas RAG |
-| **Subtítulo** | Automated Evaluation of Retrieval Augmented Generation |
-| **Descrição** | Framework open-source para avaliação automática de pipelines RAG. Usa LLM-as-judge para calcular 4 métricas sem necessidade de anotação humana exaustiva: Faithfulness (fundamentação), Answer Relevancy (pertinência), Context Recall (cobertura) e Context Precision (precisão do retrieval). |
-| **Aplicabilidades** | Avaliação de chatbots jurídicos; benchmarking de chunking strategies; monitoração de degradação em produção; comparação de modelos de embedding |
-| **Vantagens** | Automático (não precisa de anotadores humanos); alinhado com percepção humana; extensível com métricas customizadas |
-| **Limitações** | Depende de LLM judge (custo/latência); resultados podem variar com modelo judge; requer ground-truth para Context Recall |
-| **Lab** | LAB2 (baseline) + LAB3 (integração LangFuse) + LAB5 (dashboard) |
-| **Referência** | ES et al. arXiv:2309.15217, 2023. |
-
-### Ficha — DeepEval (Testes Unitários)
-
-| Campo | Conteúdo |
-|---|---|
-| **Categoria** | Testes de Qualidade LLM |
-| **Subtítulo** | Pytest-like unit tests for LLM outputs |
-| **Descrição** | Framework de testes unitários para pipelines LLM. Permite escrever assertions como `assert_test(case, [FaithfulnessMetric(threshold=0.7)])` integradas ao pytest. Suporta CI/CD para evitar regressões de qualidade em deploys. |
-| **Aplicabilidades** | Pipeline RAG jurídico com requisito de Faithfulness; detecção de Hallucination em respostas sobre legislação; testes de regressão após atualização do corpus |
-| **Vantagens** | Integração nativa com pytest; suporte a CI/CD; relatórios detalhados de falha com diagnóstico |
-| **Limitações** | Também usa LLM judge; threshold fixo pode não capturar nuances; custo por teste em modelos pagos |
-| **Lab** | LAB4 |
-| **Referência** | CONFIDENT AI. *DeepEval Documentation*. 2024. |
+1. Calcular as 4 métricas RAGAS usando **Groq como LLM judge** e **Ollama BGE-M3 como embedding judge** (via wrappers LangChain)
+2. **Integrar avaliação RAGAS com LangFuse Scores API** — quality gate por consulta com `@observe`
+3. Escrever **testes DeepEval** com judge customizado (`DeepEvalBaseLLM` envolvendo Groq/Ollama)
+4. **Comparar pipelines** Naive vs Advanced (Hybrid+Rerank) com dashboards
+5. **Diagnosticar falhas** de Faithfulness e aplicar correções automatizadas (retrieval/prompt/rewrite)
+6. **Operar avaliação contínua** com LangFuse: datasets versionados, dataset runs, multi-scores (numeric/categorical/boolean), sessions/users, annotation queues, prompt management, drift detection e jobs agendados
 
 ---
 
 ## Avaliação
 
-Ver `AVALIACAO_AULA5.md` para rubricas completas.
-
 | Entregável | Peso | Lab |
 |---|---|---|
-| Dataset ground-truth com 50 pares QA exportado | 15% | LAB1 |
-| 4 métricas RAGAS calculadas com pelo menos 1 acima da meta | 25% | LAB2 |
-| Pipeline RAGAS → LangFuse automático funcionando | 20% | LAB3 |
+| Dataset ground-truth com 50 pares exportado | 15% | LAB1 |
+| 4 métricas RAGAS calculadas (≥1 acima da meta) | 25% | LAB2 |
+| Pipeline RAGAS → LangFuse com `@observe` funcionando | 20% | LAB3 |
 | 5 testes DeepEval executados (≥3 passando) | 20% | LAB4 |
-| Dashboard comparativo Naive vs Advanced RAG com gráficos | 15% | LAB5 |
-| Análise de erros com ≥3 queries diagnosticadas | 5% | LAB6 |
+| Dashboard Naive vs Advanced com gráficos | 12% | LAB5 |
+| Análise de erros (≥3 queries diagnosticadas + corrigidas) | 5% | LAB6 |
+| Avaliação contínua: dataset run + ≥3 capacidades LangFuse exploradas (Sessions/Annotation/Drift/Prompt Mgmt) | 8% | LAB7 |
 
 ---
 
-## Referências Bibliográficas (ABNT)
+## Referências (ABNT)
 
-ES, S. et al. **RAGAS: Automated Evaluation of Retrieval Augmented Generation**. arXiv:2309.15217, 2023. Disponível em: <https://arxiv.org/abs/2309.15217>. Acesso em: abr. 2026.
+ES, S. et al. **RAGAS: Automated Evaluation of Retrieval Augmented Generation**. arXiv:2309.15217, 2023.
 
-CONFIDENT AI. **DeepEval — The Open-Source LLM Evaluation Framework**. Documentação oficial, 2024. Disponível em: <https://docs.confident-ai.com>. Acesso em: abr. 2026.
+CONFIDENT AI. **DeepEval — The Open-Source LLM Evaluation Framework**. <https://docs.confident-ai.com>.
 
-SAAD-FALCON, J. et al. **ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems**. arXiv:2311.09476, 2023.
+LANGFUSE. **Scores API + `@observe` decorator**. <https://langfuse.com/docs/scores>.
 
-GENG, S. et al. **Faithful and Informative Question Answering over Knowledge Graphs**. arXiv:2302.09060, 2023.
+LANGFUSE. **Datasets and Experiments**. <https://langfuse.com/docs/datasets>.
 
-CHEN, B. et al. **RAGAS v0.2: Towards Production-Ready RAG Evaluation**. arXiv:2404.14744, 2024.
+LANGFUSE. **Sessions & Users**. <https://langfuse.com/docs/tracing-features/sessions>.
 
-KWON, W. et al. **Efficient Memory Management for LLM Serving with PagedAttention**. *ACM SOSP*, 2023.
+LANGFUSE. **Prompt Management**. <https://langfuse.com/docs/prompts/get-started>.
 
-LEWIS, P. et al. **Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks**. *NeurIPS*, v. 33, 2020.
+LANGFUSE. **Annotation queues**. <https://langfuse.com/docs/scores/annotation>.
 
-LANGFUSE. **Scores API Documentation**. Disponível em: <https://langfuse.com/docs/scores/custom>. Acesso em: abr. 2026.
+GROQ INC. **Groq API Documentation**. <https://console.groq.com/docs>.
+
+OLLAMA. **bge-m3 model card**. <https://ollama.com/library/bge-m3>.
+
+OPENSEARCH PROJECT. **Hybrid / Vector Search**. 3.0 Docs. <https://docs.opensearch.org/3.0/vector-search/>.
+
+RAGAS. **Customising LLMs and Embeddings — `LangchainLLMWrapper` / `LangchainEmbeddingsWrapper`**. <https://docs.ragas.io/en/stable/howtos/customisations/customize_models.html>.
+
+BOGAN, R. et al. **Introducing reciprocal rank fusion for hybrid search**. OpenSearch Blog, 2025.
+
+TRIBUNAL DE CONTAS DA UNIÃO. **Acórdãos 2026 — base completa** (usada como vector store da Aula 4).

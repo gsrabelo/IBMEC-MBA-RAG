@@ -1,0 +1,26 @@
+# Dependencias dos scripts da Aula 9 (MBA RAG & CAG) - Graph RAG com LightRAG
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de Graph RAG ---
+lightrag-hku>=1.4            # LightRAG core (grafo de conhecimento)
+                            # storage NATIVO em arquivo: NetworkX + NanoVectorDB + JSON
+                            # (nao precisa de banco de grafo nem OpenSearch nesta aula)
+### Para o LightRAG Server + WebUI (visualizar o grafo), instale o extra [api]:
+###     pip install "lightrag-hku[api]"
+### Veja aula9/server/GUIA_SERVER_WEBUI.md
+
+# --- LLM (Groq, OpenAI-compatible) e embeddings (Ollama) ---
+openai>=1.40                # usado por lightrag.llm.openai (Groq)
+ollama>=0.3                 # usado por lightrag.llm.ollama (embeddings bge-m3)
+
+# --- Exploracao do grafo (script 04) ---
+networkx>=3.0               # le o graph_chunk_entity_relation.graphml
+
+# --- Utilidades ---
+python-dotenv>=1.0
+
+# Observacao: tiktoken e nano-vectordb sao puxados automaticamente pelo lightrag-hku.
+# Embedding: bge-m3 (1024 dim) -> ollama pull bge-m3 (mesmo do Server/WebUI).
+# LLM recomendado (Groq): llama-3.3-70b-versatile  -> AULA9_LLM_MODEL no .env.
+# NAO use modelo de raciocinio (gpt-oss) na indexacao: a doc do LightRAG desaconselha.

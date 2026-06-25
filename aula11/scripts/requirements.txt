@@ -1,0 +1,36 @@
+# Dependencias dos scripts da Aula 11 (MBA RAG & CAG) - Tecnicas Complementares
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+#
+# DICA: voce pode instalar so o que precisa por tecnica (veja os blocos abaixo).
+# As libs pesadas (torch/faiss/CLIP) sao grandes - instale conforme for usar o script.
+
+# --- Base (00/01/02 + busca densa) ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0
+ollama-haystack>=4.0
+openai>=1.40                 # cliente Groq
+python-dotenv>=1.0
+requests>=2.31
+
+# --- 03 Compressao (LLMLingua-2) ---
+llmlingua>=0.2               # baixa um encoder multilingue (~560MB); roda em CPU
+
+# --- 04 ColBERT (late interaction) ---
+pylate>=1.1                  # ColBERT em PyTorch puro (Windows/CPU, SEM compilador C++)
+                            # (substitui o ragatouille, que exige MSVC/cl.exe no Windows)
+
+# --- 05 Multimodal (OCR + CLIP sobre PDFs) ---
+sentence-transformers>=3.0   # CLIP clip-ViT-B-32 (puxa torch; baixa ~600MB)
+pillow>=10.0
+pymupdf>=1.24                # renderiza cada pagina do PDF em imagem (import fitz)
+docling>=2.0                 # OCR / extracao de texto por pagina (do_ocr=True)
+byaldi>=0.0.5                # ColPali (late interaction multimodal) - modo --modo colpali
+
+# --- 06 DSPy (otimizacao de prompt) ---
+dspy-ai>=2.5                 # usa a Groq via dspy.LM (OpenAI-compatible)
+
+# Notas:
+# - LLM recomendado (Groq): llama-3.3-70b-versatile -> AULA11_LLM_MODEL no .env.
+# - Embeddings: nomic-embed-text (Ollama) -> ollama pull nomic-embed-text.
+# - Time-Aware (02) nao precisa de lib extra (e OpenSearch + Python puro).

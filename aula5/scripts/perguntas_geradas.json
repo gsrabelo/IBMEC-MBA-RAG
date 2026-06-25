@@ -1,0 +1,72 @@
+[
+  {
+    "id": "GEN001",
+    "question": "Qual é o valor da operação de crédito mencionada no Acórdão do TCU?",
+    "ground_truth": "R$ 30.000.000,00",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2344_2764954"
+  },
+  {
+    "id": "GEN002",
+    "question": "Qual é o valor estimado da licitação para a construção da 5ª Ponte sobre o Rio Acre em Rio Branco/AC?",
+    "ground_truth": "R$ 69,8 milhões",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2343_2765696"
+  },
+  {
+    "id": "GEN003",
+    "question": "Qual foi o valor da multa aplicada a Antonio Almir Bie da Silva?",
+    "ground_truth": "R$ 3.500,00",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2342_2739137"
+  },
+  {
+    "id": "GEN004",
+    "question": "Qual foi o valor do débito que restou após o recolhimento da quase totalidade da dívida?",
+    "ground_truth": "R$ 24,72",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2341_2765697"
+  },
+  {
+    "id": "GEN005",
+    "question": "Qual foi o resultado do Mandado de Segurança nº 40034-RJ, ajuizado pela empresa Stryker do Brasil Ltda. no Supremo Tribunal Federal?",
+    "ground_truth": "A segurança foi denegada",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2340_2737249"
+  },
+  {
+    "id": "GEN006",
+    "question": "Qual é o valor do saldo residual do débito solidário mencionado no Acórdão 2339/2026 do TCU?",
+    "ground_truth": "R$ 34,86",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2339_2756817"
+  },
+  {
+    "id": "GEN007",
+    "question": "Qual é o número do Acórdão do TCU mencionado no texto?",
+    "ground_truth": "2338/2026",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2338_2766861"
+  },
+  {
+    "id": "GEN008",
+    "question": "Qual foi o objeto da Transferência Legal 88/2021, conforme o Acórdão do TCU?",
+    "ground_truth": "Reconstrução de pontes de madeira no Município de Nova Maringá/MT",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2337_2742797"
+  },
+  {
+    "id": "GEN009",
+    "question": "Qual é o número do Acórdão mencionado no texto?",
+    "ground_truth": "2336/2026",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2336_2765799"
+  },
+  {
+    "id": "GEN010",
+    "question": "Qual é o número do Acórdão emitido pelo TCU?",
+    "ground_truth": "2335/2026",
+    "tipo": "acordao_tcu",
+    "doc_id": "acordao_2026_2335_2766557"
+  }
+]

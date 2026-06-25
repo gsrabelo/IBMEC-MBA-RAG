@@ -1,0 +1,90 @@
+[
+  {
+    "id": "GENPC001",
+    "pergunta": "Qual é o número do processo de monitoramento mencionado no acórdão?",
+    "ground_truth": "TC-014.210/2025-8",
+    "tecnica_ideal": "Parent-Child",
+    "documentos_relevantes": [
+      "acordao_2026_1163_2765503"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta especifica sobre um detalhe de um documento longo: a busca precisa do trecho exato (filho) e a resposta precisa do contexto ao redor (pai)."
+  },
+  {
+    "id": "GENPC002",
+    "pergunta": "Qual é o número do processo de pensão militar mencionado no acórdão?",
+    "ground_truth": "TC-009.326/2026-0",
+    "tecnica_ideal": "Parent-Child",
+    "documentos_relevantes": [
+      "acordao_2026_2293_2766404"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta especifica sobre um detalhe de um documento longo: a busca precisa do trecho exato (filho) e a resposta precisa do contexto ao redor (pai)."
+  },
+  {
+    "id": "GENPC004",
+    "pergunta": "Qual foi o valor histórico do débito que o Acórdão 2140/2026 reduziu, conforme o item 9.1.1?",
+    "ground_truth": "R$ 52.473,28",
+    "tecnica_ideal": "Parent-Child",
+    "documentos_relevantes": [
+      "acordao_2026_2140_2602274"
+    ],
+    "tipo": "ACÓRDÃO",
+    "justificativa": "Pergunta especifica sobre um detalhe de um documento longo: a busca precisa do trecho exato (filho) e a resposta precisa do contexto ao redor (pai)."
+  },
+  {
+    "id": "GENPC005",
+    "pergunta": "Qual é o número do processo de pensão civil mencionado no acórdão?",
+    "ground_truth": "TC-008.098/2026-3",
+    "tecnica_ideal": "Parent-Child",
+    "documentos_relevantes": [
+      "acordao_2026_2184_2765840"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta especifica sobre um detalhe de um documento longo: a busca precisa do trecho exato (filho) e a resposta precisa do contexto ao redor (pai)."
+  },
+  {
+    "id": "GENPC006",
+    "pergunta": "Qual o número do processo de pensão civil mencionado no acórdão?",
+    "ground_truth": "TC-006.196/2026-8",
+    "tecnica_ideal": "Parent-Child",
+    "documentos_relevantes": [
+      "acordao_2026_2292_2763712"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta especifica sobre um detalhe de um documento longo: a busca precisa do trecho exato (filho) e a resposta precisa do contexto ao redor (pai)."
+  },
+  {
+    "id": "GENHY001",
+    "pergunta": "O que o TCU decidiu sobre a denúncia que falava de supostas irregularidades na UFMT?",
+    "ground_truth": "O Tribunal de Contas da União, por unanimidade, reconheceu a denúncia, considerou‑a improcedente, retirou a chancela de sigilo (mantendo sigilosa apenas a identidade do denunciante) e determinou o seu arquivamento, devendo ser comunicada a decisão ao denunciante e à Fundação Universidade Federal de Mato Grosso.",
+    "tecnica_ideal": "HyDE",
+    "documentos_relevantes": [
+      "acordao_2026_1182_2764737"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta coloquial: ha gap de vocabulario com o documento tecnico; o documento hipotetico aproxima a busca do corpus."
+  },
+  {
+    "id": "GENHY004",
+    "pergunta": "Por que o TCU não registrou a reforma do militar José Roberto Gomes Pinto?",
+    "ground_truth": "O Tribunal de Contas da União negou o registro do ato de reforma em razão da divergência entre o posto utilizado como base de cálculo constante do ato e a remuneração efetivamente devida ao interessado.",
+    "tecnica_ideal": "HyDE",
+    "documentos_relevantes": [
+      "acordao_2026_2279_2766383"
+    ],
+    "tipo": "ACÓRDÃO",
+    "justificativa": "Pergunta coloquial: ha gap de vocabulario com o documento tecnico; o documento hipotetico aproxima a busca do corpus."
+  },
+  {
+    "id": "GENHY005",
+    "pergunta": "Qual foi o nome da pessoa que teve a aposentadoria aprovada nesse acórdão do TCU?",
+    "ground_truth": "Maria Stela Melo Santos Taqueda, inscrita no CPF sob o número XXX.908.535-XX, cuja aposentadoria foi registrada conforme o Acórdão nº 2283/2026 da Segunda Câmara do Tribunal de Contas da União.",
+    "tecnica_ideal": "HyDE",
+    "documentos_relevantes": [
+      "acordao_2026_2283_2766911"
+    ],
+    "tipo": "ACÓRDÃO DE RELAÇÃO",
+    "justificativa": "Pergunta coloquial: ha gap de vocabulario com o documento tecnico; o documento hipotetico aproxima a busca do corpus."
+  }
+]

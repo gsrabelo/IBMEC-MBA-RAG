@@ -1,0 +1,25 @@
+# Dependencias dos scripts da Aula 3 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0      # integracao OpenSearch (DocumentStore + retrievers)
+ollama-haystack>=4.0          # integracao Ollama (embedders)
+
+# --- Cliente usado para falar com a Groq (API compativel com OpenAI) ---
+openai>=1.40
+
+# --- Reranking (cross-encoder BGE-reranker-v2-m3) ---
+sentence-transformers>=3.0
+transformers>=4.40
+torch>=2.0
+accelerate>=0.26          # exigido pelo TransformersSimilarityRanker do Haystack
+
+# --- Observabilidade (LangFuse, auto-instrumentacao do Haystack) ---
+langfuse-haystack>=1.0        # integracao LangFuse <-> Haystack
+langfuse>=2.0
+
+# --- Configuracao via .env ---
+python-dotenv>=1.0
+requests>=2.31

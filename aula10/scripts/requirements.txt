@@ -1,0 +1,24 @@
+# Dependencias dos scripts da Aula 10 (MBA RAG & CAG) - Agentic / Adaptive RAG
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de agentes / RAG ---
+haystack-ai>=2.30            # Agent (ReAct/tool-calling) + Tool + ConditionalRouter
+opensearch-haystack>=3.0     # busca densa (ferramenta buscar_documentos)
+ollama-haystack>=4.0         # embeddings (Ollama)
+openai>=1.40                 # cliente para a Groq (tool calling)
+
+# --- Ferramenta de web search (opcional) ---
+tavily-haystack         # TavilyWebSearch (ferramenta buscar_web; so com TAVILY_API_KEY)
+
+# --- Observabilidade (script 03) ---
+langfuse>=4.0
+langfuse-haystack>=1.0
+
+# --- Utilidades ---
+python-dotenv>=1.0
+
+# SQLite ja vem com o Python (ferramenta consultar_banco -> juridico_segpub.db).
+# LLM: Groq llama-3.3-70b-versatile (tool calling) -> AULA10_LLM_MODEL no .env.
+# NAO use modelo de raciocinio (gpt-oss): o tool-calling fica instavel.
+# A ferramenta buscar_documentos REUSA o indice 'aula4_hibrido' (rode a Aula 4 antes).

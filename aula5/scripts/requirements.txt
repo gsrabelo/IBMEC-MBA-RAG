@@ -1,0 +1,32 @@
+# Dependencias dos scripts da Aula 5 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Avaliacao ---
+ragas>=0.2                 # 4 metricas (faithfulness, answer relevancy, context recall/precision)
+deepeval>=0.21            # testes de qualidade (faithfulness, relevancy, hallucination, toxicity, bias)
+datasets>=2.0            # usado pelo RAGAS
+
+# IMPORTANTE: o RAGAS importa langchain_community.chat_models.vertexai, que existe
+# na versao 0.4.1 mas foi removido na 0.4.2. Mantenha o community pinado:
+langchain-community==0.4.1
+
+# --- LLM judge / embeddings (LangChain) ---
+langchain-groq>=1.0       # ChatGroq (juiz LLM)
+langchain-ollama>=1.0     # OllamaEmbeddings (RAGAS)
+langchain-core>=0.3
+
+# --- Geracao do dataset (RAG hibrido, reaproveita o stack das aulas) ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0
+ollama-haystack>=4.0
+openai>=1.40
+
+# --- Observabilidade ---
+langfuse>=4.0             # Scores API
+langfuse-haystack>=1.0   # LangfuseConnector (auto-instrumentacao do chat - script 06)
+
+# --- Utilidades ---
+pandas>=2.0
+python-dotenv>=1.0
+requests>=2.31

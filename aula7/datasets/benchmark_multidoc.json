@@ -1,0 +1,145 @@
+[
+  {
+    "id": "BT001",
+    "query": "Por que o TCU fica de olho em tantas coisas como obras, dívidas e pagamentos do governo, e o que isso significa pra gente?",
+    "documentos_relevantes": [
+      "acordao_2026_1107_2696329",
+      "acordao_2026_1113_2764890",
+      "acordao_2026_1077_2762886"
+    ],
+    "resposta_esperada": "O TCU serve como fiscal da grana pública. Ele verifica se o dinheiro que vem dos cofres está sendo usado direitinho – seja em obras de infraestrutura, no pagamento de multas ou na quitação de dívidas. Quando acha algo errado ou que pode melhorar, abre processos, acompanha o cumprimento das decisões e, se necessário, cobra os responsáveis. Tudo isso ajuda a evitar desperdício, garantir que os projetos sejam concluídos e que o contribuinte não pague a mais.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT002",
+    "query": "Por que o TCU tem que analisar e aprovar as aposentadorias que o governo manda, e o que isso significa pra gente?",
+    "documentos_relevantes": [
+      "acordao_2026_2075_2763521",
+      "acordao_2026_1938_2763270",
+      "acordao_2026_2069_2762075",
+      "acordao_2026_1936_2762818"
+    ],
+    "resposta_esperada": "O TCU checa se as aposentadorias que os ministérios e o INSS concedem seguem as regras e não desperdiçam dinheiro público. Ele recebe os pedidos, verifica se tudo está certo e, se estiver, registra a aprovação. Esse controle serve para garantir que a grana dos contribuintes seja usada de forma correta e que ninguém receba benefício fora da lei.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT003",
+    "query": "Por que o TCU tem que analisar e registrar todas as pensões que o Exército concede? Não dá pra deixar isso só dentro da própria força?",
+    "documentos_relevantes": [
+      "acordao_2026_2015_2762543",
+      "acordao_2026_2293_2766404",
+      "acordao_2026_2021_2763250",
+      "acordao_2026_2173_2763293"
+    ],
+    "resposta_esperada": "O TCU verifica as pensões militares para garantir que o dinheiro público seja usado certinho, que os critérios legais estejam sendo seguidos e que não haja pagamentos indevidos. Ele registra cada concessão para ter transparência, evitar fraudes e assegurar que o Exército cumpra as normas de controle interno e da Constituição.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT004",
+    "query": "Por que o TCU tem que analisar e registrar todo pedido de pensão civil que sai de órgãos como o Ministério da Saúde, o INSS ou a Fundação Nacional de Saúde?",
+    "documentos_relevantes": [
+      "acordao_2026_2165_2765166",
+      "acordao_2026_2290_2766391",
+      "acordao_2026_2184_2765840",
+      "acordao_2026_2252_2764796"
+    ],
+    "resposta_esperada": "O TCU cuida para que a concessão de pensões civis siga as regras de transparência e legalidade. Sempre que um órgão do governo decide pagar uma pensão civil, o pedido tem que ser enviado ao TCU, que verifica se o benefício está sendo concedido de acordo com a lei, se a documentação está correta e se o dinheiro está sendo gasto de forma correta. Depois de checar tudo, o tribunal registra o ato, garantindo que o processo foi fiscalizado e que não há irregularidades.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT005",
+    "query": "Por que o TCU costuma tirar a possibilidade de alguém trabalhar em cargo público quando pega pegado fraudando benefícios do INSS?",
+    "documentos_relevantes": [
+      "acordao_2026_1060_2759672",
+      "acordao_2026_1298_2762034"
+    ],
+    "resposta_esperada": "Quando o TCU descobre que alguém ajudou a conseguir benefícios do INSS de forma irregular – seja falsificando documentos, enganando o sistema ou até cometendo crime – ele abre um processo de tomada de contas para apurar o prejuízo ao erário. Se ficar provado que a pessoa agiu com culpa grave, o tribunal costuma aplicar multa, cobrar o valor indevido e, além disso, impedir que o responsável ocupe cargos ou funções de confiança no governo federal. Essa medida serve como punição e como forma de proteger a administração pública de quem já mostrou que pode fraudar o sistema.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT006",
+    "query": "Eu ouvi falar que tem rolado umas denúncias de falta de transparência e de favorecimento em alguns conselhos profissionais, tipo o de arquitetura no Paraná e o de corretores de imóveis em São Paulo. O que tá acontecendo de forma geral com essas acusações?",
+    "documentos_relevantes": [
+      "acordao_2026_1249_2766688",
+      "acordao_2026_1185_2761116"
+    ],
+    "resposta_esperada": "Basicamente, tem gente apontando que alguns conselhos profissionais não estão seguindo regras básicas de gestão. As denúncias falam de conflitos de interesse, falta de controle interno, uso indevido de recursos e até de seguros de vida sendo concedidos de maneira suspeita a dirigentes. O TCU recebeu essas reclamações, verificou que há indícios de irregularidades e pediu explicações aos órgãos envolvidos. Em alguns casos, as explicações foram dadas rapidamente, mas ainda assim o tribunal está analisando se as práticas foram corretas ou se precisam de correções.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT007",
+    "query": "Por que às vezes o meu pedido de aposentadoria dá problema e o governo não aceita o cálculo que eu acho que é justo?",
+    "documentos_relevantes": [
+      "acordao_2026_2195_2764195",
+      "acordao_2026_2189_2745590",
+      "acordao_2026_2211_2765418",
+      "acordao_2026_2256_2748266"
+    ],
+    "resposta_esperada": "O TCU tem visto vários casos em que a forma de calcular a aposentadoria ou de pagar benefícios não segue as regras que a Constituição e as leis estabelecem. Quando o servidor entrou no serviço antes de 2003, a aposentadoria deve ser feita usando a média das remunerações de contribuição e garantir a integralidade e paridade (ou seja, o mesmo valor que o ativo ganha). Também não pode acumular certos benefícios, como o pagamento de quintos, sem que haja uma decisão judicial que autorize. Se o cálculo ou o pagamento não obedecer a essas normas, o pedido pode ser recusado ou ter que ser ajustado, porque o órgão responsável tem que seguir a lei à risca.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT008",
+    "query": "Por que o TCU costuma abrir processos de tomada de contas quando o dinheiro da União destinado a projetos de saúde indígena ou saneamento não tem comprovação de uso?",
+    "documentos_relevantes": [
+      "acordao_2026_2259_2765888",
+      "acordao_2026_1245_2766258"
+    ],
+    "resposta_esperada": "O TCU verifica se os recursos federais que chegam a estados ou municípios para ações de saúde e saneamento estão sendo realmente aplicados nos projetos que foram aprovados. Quando a fiscalização local (como a Superintendência da Funasa) não consegue provar que o dinheiro foi gasto conforme o convênio – seja em prevenção de doenças entre povos indígenas ou em melhorias de saneamento domiciliar – o tribunal abre uma Tomada de Contas Especial. Esse procedimento serve para investigar o que aconteceu com o dinheiro, identificar possíveis irregularidades e, se for o caso, cobrar a devolução dos valores ou aplicar sanções aos responsáveis.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT009",
+    "query": "Por que o TCU às vezes diz que não pode refazer auditorias ou mudar decisões quando o Congresso pede, e ainda aponta que alguns programas do governo não estão cumprindo tudo o que prometeram?",
+    "documentos_relevantes": [
+      "acordao_2026_1095_2741017",
+      "acordao_2026_1202_2759280",
+      "acordao_2026_1130_2764946",
+      "acordao_2026_1193_2760302"
+    ],
+    "resposta_esperada": "O TCU é o órgão que checa se o dinheiro público está sendo usado direitinho. Quando o Congresso pede pra ele reabrir uma auditoria já concluída, o tribunal costuma recusar porque a lei só permite revisar processos dentro de certos limites e com justificativas bem fortes – não dá pra ficar reavaliando tudo toda hora. Ao mesmo tempo, o TCU faz relatórios sobre programas do governo e, se vê que faltou planejamento, metas mal definidas ou resultados abaixo do esperado, aponta essas falhas e recomenda correções. Ou seja, ele não pode mudar tudo só porque alguém pediu, mas pode sinalizar onde o governo precisa melhorar.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT010",
+    "query": "Se o município ou a empresa não cumpre direito o que acontece quando eles pedem pra reavaliar a decisão do TCU?",
+    "documentos_relevantes": [
+      "acordao_2026_2218_2765233",
+      "acordao_2026_2036_2763318",
+      "acordao_2026_2140_2602274"
+    ],
+    "resposta_esperada": "Quando o TCU constata que um contrato público foi mal executado – seja por superfaturamento, obras incompletas ou uso de recursos para outra coisa – ele abre uma Tomada de Contas Especial e pode aplicar multas e cobrar débitos. Se o ente (município ou empresa) não concorda da decisão, pode entrar com um recurso de reconsideração. O TCU revisa o pedido, mas costuma manter a penalidade se os problemas persistirem; às vezes reduz o valor da multa ou do débito, mas raramente anula a decisão, porque as irregularidades já foram comprovadas.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT012",
+    "query": "Por que às vezes a gente vê licitações sendo paradas ou empresas sendo desclassificadas, mesmo quando parece que tudo estava certinho?",
+    "documentos_relevantes": [
+      "acordao_2026_1135_2760526",
+      "acordao_2026_1230_2766267"
+    ],
+    "resposta_esperada": "O TCU tem visto vários casos em que licitações são questionadas porque o processo não foi justo ou transparente. Às vezes, uma empresa que estava bem classificada é tirada do certame por questões de formalismo exagerado ou por mudanças na composição do consórcio que não foram bem justificadas. Em outras situações, surgem suspeitas de conflito de interesse ou de critérios de avaliação que foram criados depois que a licitação já estava rolando, o que pode favorecer algum concorrente. Quando o TCU identifica esses problemas, ele pode suspender a licitação ou pedir que sejam feitas correções, para garantir que a escolha do fornecedor seja feita de forma imparcial e que o dinheiro público seja bem usado.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT013",
+    "query": "O TCU costuma ficar de olho nas universidades e órgãos públicos depois de dar recomendações ou receber denúncias? Como funciona esse acompanhamento?",
+    "documentos_relevantes": [
+      "acordao_2026_1163_2765503",
+      "acordao_2026_1182_2764737",
+      "acordao_2026_1057_2748211"
+    ],
+    "resposta_esperada": "Sim, o TCU não só aponta o que precisa ser corrigido nas instituições, como universidades e conselhos, mas também acompanha se elas realmente fizeram o que foi pedido. Quando há denúncia de irregularidade, o tribunal abre o caso, verifica os fatos e, se achar que a denúncia não tem fundamento, a encerra. Já nas recomendações, ele faz um monitoramento: verifica documentos, pede relatórios e, se tudo estiver em ordem, considera a medida cumprida. Esse controle serve para garantir que o dinheiro público seja usado direito e que as regras sejam seguidas.",
+    "tipo": "tematica"
+  },
+  {
+    "id": "BT014",
+    "query": "Por que o TCU costuma abrir processos de tomada de contas quando tem caso de benefício do INSS concedido de forma irregular?",
+    "documentos_relevantes": [
+      "acordao_2026_2082_2764761",
+      "acordao_2026_2248_2765127"
+    ],
+    "resposta_esperada": "O TCU costuma investigar esses casos porque, quando alguém consegue um benefício do INSS de maneira fraudulenta – seja inserindo dados falsos, usando documentos falsos ou combinando com terceiros – acaba desviando dinheiro público. Nesses processos, o tribunal verifica quem foi o responsável (às vezes o próprio servidor, às vezes um intermediário ou até o beneficiário) e determina a devolução dos valores e as sanções cabíveis. O objetivo é proteger o erário e garantir que os recursos da Previdência sejam usados apenas por quem realmente tem direito.",
+    "tipo": "tematica"
+  }
+]

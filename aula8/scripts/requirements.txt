@@ -1,0 +1,28 @@
+# Dependencias dos scripts da Aula 8 (MBA RAG & CAG)
+# Self-RAG, CRAG e roteamento condicional (Haystack ConditionalRouter).
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30            # inclui ConditionalRouter (roteamento do CRAG)
+opensearch-haystack>=3.0
+ollama-haystack>=4.0
+openai>=1.40                 # cliente para a Groq
+
+# --- Web search de fallback (CRAG / Self-RAG) ---
+tavily-haystack             # componente oficial TavilyWebSearch (puxa tavily-python)
+                             # opcional: so usado se TAVILY_API_KEY estiver no .env
+
+# --- Avaliacao RAGAS (script 05) ---
+ragas>=0.4.3
+langchain-groq>=0.2          # juiz LLM (ChatGroq) para o RAGAS
+langchain-ollama>=0.2        # embeddings do RAGAS (fallback: langchain-community)
+langchain-community==0.4.1   # PIN: 0.4.2 quebra o import do ragas (chat_models.vertexai)
+
+# --- Observabilidade (scripts 04 e 06) ---
+langfuse>=4.0
+langfuse-haystack>=1.0
+
+# --- Utilidades ---
+python-dotenv>=1.0
+requests>=2.31

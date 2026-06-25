@@ -1,0 +1,24 @@
+# Dependencias dos scripts da Aula 1 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0      # integracao OpenSearch (DocumentStore + retrievers)
+ollama-haystack>=4.0          # integracao Ollama (embedders)
+
+# --- Cliente usado para falar com a Groq (API compativel com OpenAI) ---
+openai>=1.40
+
+# --- NLP basico (script 01) ---
+nltk>=3.9
+scikit-learn>=1.5
+
+# --- Embeddings, similaridade e graficos (scripts 02 e 03) ---
+numpy>=1.26
+requests>=2.31
+umap-learn>=0.5
+matplotlib>=3.8
+
+# --- Configuracao via .env ---
+python-dotenv>=1.0

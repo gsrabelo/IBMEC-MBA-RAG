@@ -1,0 +1,38 @@
+[
+  {
+    "id": "tcu_local_01",
+    "pergunta": "Quando as contas de um gestor podem ser julgadas irregulares pelo TCU?",
+    "rota_esperada": "local",
+    "motivo": "Tema coberto pelos acordaos do TCU indexados (aula4_hibrido)."
+  },
+  {
+    "id": "tcu_local_02",
+    "pergunta": "Em que situacoes o Tribunal de Contas pode aplicar multa ao responsavel?",
+    "rota_esperada": "local",
+    "motivo": "Sancao prevista e discutida nos acordaos do corpus local."
+  },
+  {
+    "id": "tcu_local_03",
+    "pergunta": "O que caracteriza debito imputado pelo TCU em tomada de contas?",
+    "rota_esperada": "local",
+    "motivo": "Conceito presente nos acordaos do corpus local."
+  },
+  {
+    "id": "tcu_web_01",
+    "pergunta": "Quais foram as principais decisoes do STF sobre interceptacao telefonica em 2024?",
+    "rota_esperada": "web",
+    "motivo": "Evento recente, fora do corpus local -> deve disparar o fallback web (Tavily)."
+  },
+  {
+    "id": "tcu_web_02",
+    "pergunta": "Qual a regulamentacao mais recente da Autoridade Nacional de Protecao de Dados (ANPD) em 2025?",
+    "rota_esperada": "web",
+    "motivo": "Informacao atual nao indexada -> rota web."
+  },
+  {
+    "id": "tcu_web_03",
+    "pergunta": "Quais orientacoes recentes (2025) o TCU publicou sobre contratacoes emergenciais?",
+    "rota_esperada": "web",
+    "motivo": "Conteudo recente que provavelmente nao esta no corpus local -> rota web/fusao."
+  }
+]

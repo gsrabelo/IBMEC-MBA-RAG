@@ -1,0 +1,27 @@
+# Dependencias dos scripts da Aula 4 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0      # OpenSearchDocumentStore + retrievers (BM25/Embedding/Hybrid)
+ollama-haystack>=4.0          # integracao Ollama (embedders)
+
+# --- Cliente OpenSearch (usado direto no neural sparse) ---
+opensearch-py>=2.7
+
+# --- Cliente usado para falar com a Groq (API compativel com OpenAI) ---
+openai>=1.40
+
+# --- Neural Sparse (SPLADE) em Python ---
+transformers>=4.40
+torch>=2.0
+
+# --- Observabilidade (LangFuse, auto-instrumentacao do Haystack) ---
+langfuse-haystack>=1.0
+langfuse>=2.0
+
+# --- Metricas e utilidades ---
+numpy>=1.26
+python-dotenv>=1.0
+requests>=2.31

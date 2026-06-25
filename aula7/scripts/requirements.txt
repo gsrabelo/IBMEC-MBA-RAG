@@ -1,0 +1,21 @@
+# Dependencias dos scripts da Aula 7 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30            # inclui DocumentJoiner (RRF) para o RAG-Fusion
+opensearch-haystack>=3.0
+ollama-haystack>=4.0
+openai>=1.40                 # cliente para a Groq
+
+# --- Benchmark modo --multi-doc (clustering tematico, script 05) ---
+scikit-learn>=1.5
+numpy>=1.26
+
+# --- Observabilidade (script 06) ---
+langfuse>=4.0
+langfuse-haystack>=1.0
+
+# --- Utilidades ---
+python-dotenv>=1.0
+requests>=2.31

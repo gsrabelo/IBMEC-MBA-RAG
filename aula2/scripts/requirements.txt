@@ -1,0 +1,25 @@
+# Dependencias dos scripts da Aula 2 (MBA RAG & CAG)
+# Instale com o ambiente virtual ATIVADO:
+#     pip install -r requirements.txt
+
+# --- Framework de orquestracao RAG ---
+haystack-ai>=2.30
+opensearch-haystack>=3.0      # integracao OpenSearch (DocumentStore + retrievers)
+ollama-haystack>=4.0          # integracao Ollama (embedders)
+
+# --- Cliente usado para falar com a Groq (API compativel com OpenAI) ---
+openai>=1.40
+
+# --- Ingestao de PDFs ---
+docling>=2.0                  # extracao estruturada (Markdown, tabelas, OCR)
+PyPDF2>=3.0                   # extracao simples (baseline de comparacao)
+
+# --- Chunking (estrategias de divisao de texto) ---
+langchain-text-splitters>=0.3   # Fixed, Recursive, Header (Markdown)
+langchain-experimental>=0.3     # SemanticChunker
+langchain-ollama>=0.2           # embeddings do Ollama para o Semantic
+langchain-core>=0.3
+
+# --- Configuracao via .env ---
+python-dotenv>=1.0
+requests>=2.31

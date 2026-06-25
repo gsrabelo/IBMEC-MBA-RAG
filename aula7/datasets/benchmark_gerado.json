@@ -1,0 +1,137 @@
+[
+  {
+    "id": "BQ001",
+    "query": "Se alguém recebe dinheiro de um cargo comissionado sem trabalhar, o que pode acontecer?",
+    "documentos_relevantes": [
+      "acordao_2026_1228_2762185"
+    ],
+    "resposta_esperada": "As contas podem ser consideradas irregulares, com condenação em débito e aplicação de multa, devido ao recebimento de remuneração sem a correspondente contraprestação laboral.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ002",
+    "query": "O que o Tribunal de Contas da União decidiu fazer com os valores de pensão militar pagos a alguns beneficiários?",
+    "documentos_relevantes": [
+      "acordao_2026_2316_2766368"
+    ],
+    "resposta_esperada": "Determinar ao Serviço de Inativos e Pensionistas da Marinha que ajuste o valor do provento pago ao beneficiário do ato 126417/2021 ao valor considerado correto por esta Corte de Contas, conforme a metodologia de cálculos adotada e devidamente detalhada no Demonstrativo de Cálculo dos Proventos constante dos autos.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ003",
+    "query": "O que aconteceu com o dinheiro que o governo deu para um projeto de qualificação de jovens em Itaboraí?",
+    "documentos_relevantes": [
+      "acordao_2026_2338_2766861"
+    ],
+    "resposta_esperada": "Ocorreu prescrição intercorrente, uma vez que houve o transcurso de prazo superior a 3 (três) anos entre o despacho que efetivou o registro da comprovação do envio da prestação de contas no SIAFI e o subsequente checklist de triagem processual, tornando impossível a punição ou ressarcimento dos recursos não comprovadamente aplicados.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ004",
+    "query": "O que aconteceu com os embargos de declaração apresentados pela Casa Civil da Presidência da República em relação ao Acórdão 2.876/2025-TCU-Plenário?",
+    "documentos_relevantes": [
+      "acordao_2026_1202_2759280"
+    ],
+    "resposta_esperada": "Os embargos de declaração foram conhecidos e rejeitados, mantendo-se inalterada a deliberação recorrida, com fundamento nos arts. 32, inciso II, e 34 da Lei 8.443/1992, c/c os arts. 277, inciso III, e 287 do Regimento Interno do TCU.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ005",
+    "query": "Posso receber o pagamento da parcela 'opção' se eu me aposentar após 1998?",
+    "documentos_relevantes": [
+      "acordao_2026_2274_2766378"
+    ],
+    "resposta_esperada": "Não, é vedado o pagamento das vantagens oriundas do art. 193 da Lei 8.112/1990, inclusive o pagamento parcial da remuneração do cargo em comissão ('opção'), aos servidores que implementaram os requisitos de aposentadoria após 16/12/1998, data de publicação da Emenda Constitucional 20/1998, que limitou o valor dos proventos à remuneração do cargo efetivo no qual se deu a aposentadoria (Súmula-TCU 290).",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ006",
+    "query": "Quem foi a pessoa que teve o ato de concessão de aposentadoria registrado pelo TCU?",
+    "documentos_relevantes": [
+      "acordao_2026_2282_2766249"
+    ],
+    "resposta_esperada": "Solange Cesar Cavalcante",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ007",
+    "query": "Quem foi o relator do processo de aposentadoria TC-007.787/2026-0?",
+    "documentos_relevantes": [
+      "acordao_2026_2287_2766389"
+    ],
+    "resposta_esperada": "Ministro Augusto Nardes",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ008",
+    "query": "Quem foi o relator do processo de aposentadoria de Jose Maria Martins de Oliveira?",
+    "documentos_relevantes": [
+      "acordao_2026_2309_2766366"
+    ],
+    "resposta_esperada": "Ministro Jorge Oliveira",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ009",
+    "query": "O que aconteceu com as pessoas que fizeram coisas erradas em contratos e licitações?",
+    "documentos_relevantes": [
+      "acordao_2026_1203_2745515"
+    ],
+    "resposta_esperada": "As contas foram julgadas irregulares, com débito, multa e inabilitação para o exercício de cargo em comissão ou função de confiança, com base no art. 60 da Lei nº 8.443/1992.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ010",
+    "query": "O que deve acontecer se as decisões judiciais que garantem o pagamento das pensões militares forem canceladas?",
+    "documentos_relevantes": [
+      "acordao_2026_2318_2766370"
+    ],
+    "resposta_esperada": "A Diretoria de Assistência ao Pessoal do Comando do Exército deve adotar medidas administrativas para regularizar as pensões e reembolsar ao erário os valores recebidos indevidamente, nos termos do art. 46 da Lei 8.112/1990, com a redação dada pela Medida Provisória 2.225-45/2001, caso o Poder Judiciário não decida de forma contrária.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ011",
+    "query": "Por que o edital de licitação para a Ferrovia Transnordestina foi considerado irregular?",
+    "documentos_relevantes": [
+      "acordao_2026_1218_2761414"
+    ],
+    "resposta_esperada": "Devido à previsão indiscriminada do serviço de pré-fissuramento, superestimativa da taxa de risco e da reserva de contingência, utilização exclusiva de opinião de especialistas em detrimento de dados históricos, deficiências no projeto básico e alteração da solução de terraplenagem sem lastro técnico formal suficiente, o que caracteriza ineficiência alocativa e afronta ao princípio da economicidade previsto no art. 31 da Lei 13.303/2016.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ012",
+    "query": "O que aconteceu com a investigação sobre possíveis irregularidades na compra de equipamentos de áudio e vídeo pela Escola de Formação Complementar do Exército?",
+    "documentos_relevantes": [
+      "acordao_2026_1252_2765875"
+    ],
+    "resposta_esperada": "O Tribunal de Contas da União (TCU) considerou que a representação não atende aos requisitos de risco, materialidade e relevância para justificar a atuação do Tribunal, e decidiu arquivar o processo após levar a representação ao conhecimento da unidade jurisdicionada para adoção de providências de sua alçada.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ013",
+    "query": "Por que os ministros do Tribunal de Contas da União não aceitaram os embargos de declaração de Gabriela Oliveira Coelho da Luz?",
+    "documentos_relevantes": [
+      "acordao_2026_2322_2767110"
+    ],
+    "resposta_esperada": "Porque os embargos foram considerados intempestivos, ou seja, não foram apresentados dentro do prazo estabelecido, em conformidade com a jurisprudência pacífica do Tribunal e o disposto no art. 143, inciso IV, alínea 'b', do Regimento Interno do TCU.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ014",
+    "query": "O que aconteceu com a licitação do Serviço Federal de Processamento de Dados para contratação de empresa de comunicação multimídia?",
+    "documentos_relevantes": [
+      "acordao_2026_1240_2766993"
+    ],
+    "resposta_esperada": "A representação foi considerada prejudicada por perda de objeto, pois a decisão que desclassificara o representante foi revisada e corrigida pelo próprio Serviço Federal de Processamento de Dados, retornando o certame à fase de julgamento das propostas.",
+    "tipo": "coloquial"
+  },
+  {
+    "id": "BQ015",
+    "query": "O que aconteceu com as contas do sr. Gesimário de Franca Carvalho?",
+    "documentos_relevantes": [
+      "acordao_2026_1283_2766274"
+    ],
+    "resposta_esperada": "As contas do sr. Gesimário de Franca Carvalho foram julgadas irregulares, condenando-o ao pagamento das importâncias especificadas, atualizadas monetariamente e acrescidas dos juros de mora, nos termos dos arts. 1º, inciso I, 16, inciso III, alínea 'b' e 'c', da Lei 8.443/1992, c/c os arts. 19 e 23, inciso III, da mesma lei.",
+    "tipo": "coloquial"
+  }
+]
