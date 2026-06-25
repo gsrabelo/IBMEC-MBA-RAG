@@ -9,7 +9,7 @@ import sys
 
 import requests
 
-BASE = "http://localhost:8000"
+BASE = "http://localhost:8001"
 HEADERS = {}  # se usar API_KEYS no .env: {"X-API-Key": "sua-chave"}
 
 

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+API_URL = os.getenv("API_URL", "http://localhost:8001")
 MODELOS_SUGERIDOS = ["nomic-embed-text", "bge-m3", "mxbai-embed-large", "snowflake-arctic-embed"]
 
 

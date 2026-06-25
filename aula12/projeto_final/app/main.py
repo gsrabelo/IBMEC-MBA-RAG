@@ -19,8 +19,12 @@ import time
 from fastapi import FastAPI, File, Header, HTTPException, UploadFile
 
 from . import config, consulta, extracao, indexacao
+from .log import configurar_logging, obter_logger
 from .modelos import (ConsultaRequest, ConsultaResponse, IngestaoResponse,
                       RelatorioIngestao)
+
+configurar_logging()           # le LOG_LEVEL do .env (DEBUG p/ verbosidade maxima)
+log = obter_logger(__name__)
 
 app = FastAPI(title="RAG Juridico - Projeto Final (Aula 12)",
               description="Ingestao inteligente (agente decide extracao) + RAG (OpenSearch/LightRAG)")
@@ -44,6 +48,9 @@ async def ingestao(arquivo: UploadFile = File(...), estrategia: str = "auto",
     """
     _checar_api_key(x_api_key)
     destino = config.PASTA_UPLOADS / arquivo.filename
+    t0 = time.time()
+    log.info("== /ingestao recebido: arquivo=%s (estrategia=%s, chunking=%s) ==",
+             arquivo.filename, estrategia, chunking)
     try:
         destino.write_bytes(await arquivo.read())
         # 1) AGENTE decide a tecnica e extrai
@@ -53,6 +60,9 @@ async def ingestao(arquivo: UploadFile = File(...), estrategia: str = "auto",
                                  destino_override=estrategia, chunking_override=chunking)
         extracao.limpar_cache(str(destino))
         METRICAS["ingestoes"] += 1
+        log.info("== /ingestao OK: arquivo=%s, destino=%s, chunking=%s, chunks=%d (%.1fs) ==",
+                 arquivo.filename, estr["destino"], estr["chunking"], estr["n_chunks"],
+                 time.time() - t0)
         relatorio = RelatorioIngestao(
             arquivo=arquivo.filename, complexidade=complexidade, tecnica_extracao=tecnica,
             motivo_extracao=motivo, estrutura=sinais,
@@ -62,6 +72,7 @@ async def ingestao(arquivo: UploadFile = File(...), estrategia: str = "auto",
         return IngestaoResponse(ok=True, relatorio=relatorio)
     except Exception as e:
         METRICAS["erros"] += 1
+        log.exception("== /ingestao FALHOU: arquivo=%s ==", arquivo.filename)
         return IngestaoResponse(ok=False, erro=str(e))
 
 
@@ -69,13 +80,16 @@ async def ingestao(arquivo: UploadFile = File(...), estrategia: str = "auto",
 def consulta_endpoint(req: ConsultaRequest, x_api_key: str = Header(default="")):
     """Consulta RAG: roteia para OpenSearch ou LightRAG e gera a resposta."""
     _checar_api_key(x_api_key)
+    log.info("== /consulta recebida: destino=%s, top_k=%d ==", req.destino, req.top_k)
     try:
         resposta, fontes, destino = consulta.consultar(req.pergunta, req.destino, req.top_k)
         METRICAS["consultas"] += 1
+        log.info("== /consulta OK: destino_usado=%s, %d fonte(s) ==", destino, len(fontes))
         return ConsultaResponse(pergunta=req.pergunta, resposta=resposta,
                                 destino_usado=destino, fontes=fontes)
     except Exception as e:
         METRICAS["erros"] += 1
+        log.exception("== /consulta FALHOU ==")
         raise HTTPException(status_code=500, detail=str(e))
 
 

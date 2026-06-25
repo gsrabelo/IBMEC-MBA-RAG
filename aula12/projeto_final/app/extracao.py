@@ -20,6 +20,9 @@ from pathlib import Path
 from haystack.dataclasses import ChatMessage
 
 from . import config
+from .log import obter_logger
+
+log = obter_logger(__name__)
 
 # cache: caminho -> {"conteudo": str, "tabelas": list, "tecnica": str}
 _CACHE = {}
@@ -107,6 +110,8 @@ def _impl_ocr(caminho):
 
 def _guardar(caminho, conteudo, tabelas, tecnica):
     _CACHE[caminho] = {"conteudo": conteudo or "", "tabelas": tabelas or [], "tecnica": tecnica}
+    log.info("Extracao concluida: tecnica=%s, %d caracteres, %d tabela(s)",
+             tecnica, len(conteudo or ""), len(tabelas or []))
     return json.dumps({"tecnica": tecnica, "n_caracteres": len(conteudo or ""),
                        "n_tabelas": len(tabelas or [])}, ensure_ascii=False)
 
@@ -191,19 +196,65 @@ def _tecnica_chamada(mensagens):
 
 MAPA_COMPLEXIDADE = {"planilha": "planilha", "ocr": "complexo", "texto": "texto_simples"}
 
+# tecnica -> funcao de extracao (usada pelo fallback heuristico)
+_IMPL = {"planilha": _impl_planilha, "ocr": _impl_ocr, "texto": _impl_texto}
+
+
+def escolher_por_sinais(sinais):
+    """Escolha DETERMINISTICA da tecnica a partir do probe (fallback, sem LLM)."""
+    if sinais.get("eh_planilha"):
+        return "planilha"
+    if sinais.get("eh_imagem") or sinais.get("provavel_escaneado"):
+        return "ocr"
+    return "texto"
+
+
+def _extrair_direto(caminho, tecnica):
+    """Roda a extracao da tecnica escolhida e popula o cache (sem agente)."""
+    conteudo, tabelas = _IMPL.get(tecnica, _impl_texto)(caminho)
+    _guardar(caminho, conteudo, tabelas, tecnica)
+    return _CACHE[caminho]
+
 
 def decidir_e_extrair(caminho):
-    """Roda o agente, descobre a tecnica usada e devolve (sinais, tecnica, motivo, dados)."""
+    """Roda o agente, descobre a tecnica usada e devolve (sinais, tecnica, complexidade, motivo, dados).
+
+    O AGENTE (LLM) e o decisor primario. Se ele falhar (ex.: o Groq devolve
+    'tool_use_failed' ao parsear o tool-call do llama-3.3) ou nao chamar nenhuma
+    ferramenta, caimos num FALLBACK HEURISTICO deterministico baseado nos sinais do
+    probe - assim a ingestao nunca quebra por instabilidade do tool-calling.
+    """
+    log.info("Iniciando extracao: %s", caminho)
     sinais = probe(caminho)
-    agente = criar_agente_extracao()
-    prompt = (f"Arquivo: {caminho}\nSinais do documento: {json.dumps(sinais, ensure_ascii=False)}\n"
-              "Escolha e chame a ferramenta de extracao adequada.")
-    resultado = agente.run(messages=[ChatMessage.from_user(prompt)])
-    tecnica = _tecnica_chamada(resultado.get("messages", [])) or "texto"
-    motivo = resultado["last_message"].text if resultado.get("last_message") else ""
-    dados = _CACHE.get(caminho, {"conteudo": "", "tabelas": [], "tecnica": tecnica})
-    complexidade = MAPA_COMPLEXIDADE.get(dados.get("tecnica", tecnica), "texto_simples")
-    return sinais, dados.get("tecnica", tecnica), complexidade, motivo, dados
+    log.debug("Sinais do probe: %s", json.dumps(sinais, ensure_ascii=False))
+    tecnica, motivo = None, ""
+    try:
+        log.info("Consultando o AGENTE (Groq) para escolher a tecnica de extracao...")
+        agente = criar_agente_extracao()
+        prompt = (f"Arquivo: {caminho}\nSinais do documento: {json.dumps(sinais, ensure_ascii=False)}\n"
+                  "Escolha e chame a ferramenta de extracao adequada.")
+        resultado = agente.run(messages=[ChatMessage.from_user(prompt)])
+        tecnica = _tecnica_chamada(resultado.get("messages", []))
+        motivo = resultado["last_message"].text if resultado.get("last_message") else ""
+        log.info("Agente escolheu a tecnica: %s", tecnica or "(nenhuma ferramenta chamada)")
+        log.debug("Mensagem final do agente: %s", motivo)
+    except Exception as e:
+        log.warning("Agente falhou (%s) -> usando fallback heuristico", e)
+        motivo = f"(fallback heuristico: agente falhou - {e})"
+
+    dados = _CACHE.get(caminho)
+    # fallback: agente nao escolheu/extraiu -> decide por sinais e extrai direto
+    if not tecnica or not dados or not dados.get("conteudo"):
+        tecnica = escolher_por_sinais(sinais)
+        log.info("FALLBACK heuristico: tecnica '%s' escolhida pelos sinais do documento", tecnica)
+        if not motivo:
+            motivo = f"(fallback heuristico: tecnica '{tecnica}' escolhida pelos sinais)"
+        dados = _extrair_direto(caminho, tecnica)
+
+    tecnica_final = dados.get("tecnica", tecnica)
+    complexidade = MAPA_COMPLEXIDADE.get(tecnica_final, "texto_simples")
+    log.info("Extracao finalizada: tecnica=%s, complexidade=%s", tecnica_final, complexidade)
+    return sinais, tecnica_final, complexidade, motivo, dados
 
 
 def limpar_cache(caminho=None):

@@ -6,90 +6,435 @@
     "data_criacao": "2024-12-01",
     "total_documentos": 30,
     "total_queries": 20,
-    "dominios": ["Direito Penal", "Processo Penal", "Legislação Especial", "Segurança Pública"]
+    "dominios": [
+      "Direito Penal",
+      "Processo Penal",
+      "Legislação Especial",
+      "Segurança Pública"
+    ]
   },
   "documentos": [
-    {"id": "D01", "fonte": "CP Art. 157", "data": "1940-12-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Roubo (Art. 157 CP): subtração de coisa móvel mediante grave ameaça ou violência. Pena: 4 a 10 anos. Majorado com arma de fogo: 2/3 da pena. Roubo qualificado com morte: latrocínio (Art. 157, §3º, II)."},
-    {"id": "D02", "fonte": "CP Art. 155", "data": "1940-12-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Furto qualificado (Art. 155, §4º CP): com destruição de obstáculo, abuso de confiança, mediante fraude, escalada ou destreza. Pena: 2 a 8 anos. Furto simples: 1 a 4 anos."},
-    {"id": "D03", "fonte": "CP Art. 157 §3º", "data": "1940-12-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Latrocínio: roubo com resultado morte. Classificado pelo STF como crime hediondo. Pena: 20 a 30 anos. Súmula 610 STF: há latrocínio quando o homicídio se consuma."},
-    {"id": "D04", "fonte": "CP Art. 158", "data": "1940-12-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Extorsão (Art. 158 CP): constranger mediante violência ou ameaça a fazer, tolerar ou omitir algo, com vantagem econômica indevida. Pena: 4 a 10 anos. Distingue-se do roubo: na extorsão a vantagem depende do comportamento da vítima."},
-    {"id": "D05", "fonte": "Lei 11.343/2006 Art. 33", "data": "2006-08-23", "vigente": true, "tipo": "legislacao",
-     "texto": "Tráfico de drogas (Art. 33 Lei 11.343/06): importar, exportar, vender, guardar, transportar drogas sem autorização. Pena: 5 a 15 anos. Crime inafiançável e insuscetível de sursis, graça ou anistia."},
-    {"id": "D06", "fonte": "Lei 11.343/2006 Art. 33 §4º", "data": "2006-08-23", "vigente": true, "tipo": "legislacao",
-     "texto": "Tráfico privilegiado (Art. 33, §4º Lei 11.343/06): agente primário, bons antecedentes, não integrante de organização criminosa, não dedicado a atividades criminosas. Redução de pena: 1/6 a 2/3."},
-    {"id": "D07", "fonte": "Lei 11.343/2006 Art. 35", "data": "2006-08-23", "vigente": true, "tipo": "legislacao",
-     "texto": "Associação ao tráfico (Art. 35 Lei 11.343/06): associação de 2 ou mais pessoas para praticar reiteradamente o tráfico. Pena: 3 a 10 anos. Distingue-se do concurso de agentes: exige estabilidade e permanência."},
-    {"id": "D08", "fonte": "Lei 11.343/2006 Art. 28", "data": "2006-08-23", "vigente": true, "tipo": "legislacao",
-     "texto": "Uso de drogas (Art. 28 Lei 11.343/06): adquirir para consumo pessoal. Não é crime, é infração administrativa. Penas: advertência, prestação de serviços à comunidade, medida educativa."},
-    {"id": "D09", "fonte": "Lei 12.850/2013 Art. 1º", "data": "2013-08-02", "vigente": true, "tipo": "legislacao",
-     "texto": "Organização criminosa (Lei 12.850/13): associação de 4 ou mais pessoas estruturalmente ordenada para obter vantagem de qualquer natureza mediante prática de infrações penais de pena máxima superior a 4 anos. Pena: 3 a 8 anos."},
-    {"id": "D10", "fonte": "Lei 12.850/2013 Art. 4º", "data": "2013-08-02", "vigente": true, "tipo": "legislacao",
-     "texto": "Colaboração premiada (Art. 4º Lei 12.850/13): acordo entre Ministério Público e colaborador. Benefícios: redução de 1/3 a 2/3 da pena, substituição, perdão judicial. Eficácia probatória: corroboração com outros elementos."},
-    {"id": "D11", "fonte": "Lei 12.850/2013 Art. 10", "data": "2013-08-02", "vigente": true, "tipo": "legislacao",
-     "texto": "Infiltração policial (Art. 10 Lei 12.850/13): infiltração de agentes de polícia em tarefas de investigação de organizações criminosas. Autorização judicial obrigatória. Prazo: até 6 meses, renovável por igual período."},
-    {"id": "D12", "fonte": "Lei 9.296/1996", "data": "1996-07-24", "vigente": true, "tipo": "legislacao",
-     "texto": "Interceptação telemática (Lei 9.296/96): interceptação de comunicações em sistemas de informática e telemática. Requisitos: indícios razoáveis, impossibilidade de outros meios, crime punido com reclusão. Prazo: 15 dias, renovável."},
-    {"id": "D13", "fonte": "Lei 8.072/1990", "data": "1990-07-25", "vigente": true, "tipo": "legislacao",
-     "texto": "Crimes hediondos (Lei 8.072/90): rol taxativo incluindo latrocínio, extorsão com morte, estupro, tráfico, genocídio, tortura, terrorismo. Vedados: fiança, graça, anistia. Progressão de regime: após cumprimento de 40% (réu primário) ou 60% (reincidente)."},
-    {"id": "D14", "fonte": "Lei 9.455/1997", "data": "1997-04-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Tortura (Lei 9.455/97): constranger alguém com sofrimento físico ou mental para obter informação, confissão, ou para aplicar castigo. Pena: 2 a 8 anos. Crime inafiançável, insuscetível de graça. Agente público: pena aumentada."},
-    {"id": "D15", "fonte": "CPP Art. 312", "data": "1941-10-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Prisão preventiva (Art. 312 CPP): garantia da ordem pública, ordem econômica, conveniência da instrução, assegurar aplicação da lei penal. Requisito: prova da existência do crime e indício de autoria. Vedada para crimes com pena máxima ≤ 4 anos."},
-    {"id": "D16", "fonte": "CF Art. 5º LXVIII", "data": "1988-10-05", "vigente": true, "tipo": "legislacao",
-     "texto": "Habeas corpus (Art. 5º, LXVIII CF): instrumento constitucional para proteger a liberdade de locomoção quando ameaçada por ilegalidade ou abuso de poder. HC preventivo: salvo-conduto. HC liberatório: relaxamento da prisão."},
-    {"id": "D17", "fonte": "CPP Art. 301", "data": "1941-10-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Prisão em flagrante (Art. 301 CPP): qualquer cidadão pode prender quem esteja em flagrante delito. Espécies: próprio, impróprio, presumido, esperado. Lavratura do APF: 24 horas. Conversão em preventiva: audiência de custódia."},
-    {"id": "D18", "fonte": "CNJ Resolução 213/2015", "data": "2015-12-15", "vigente": true, "tipo": "resolucao",
-     "texto": "Audiência de custódia (Resolução CNJ 213/2015): apresentação do preso ao juiz em até 24 horas após a prisão. Finalidade: verificar legalidade da prisão, identificar violência ou tortura, decidir sobre a manutenção ou relaxamento da prisão."},
-    {"id": "D19", "fonte": "Lei 10.826/2003 Arts. 12-14", "data": "2003-12-22", "vigente": true, "tipo": "legislacao",
-     "texto": "Estatuto do Desarmamento (Lei 10.826/03): porte ilegal de arma de fogo (Art. 14): pena 2 a 4 anos. Posse irregular (Art. 12): 1 a 3 anos. Comércio ilegal (Art. 17): 6 a 12 anos. Arma de uso restrito: penas dobradas."},
-    {"id": "D20", "fonte": "Lei 10.826/2003 Art. 18", "data": "2003-12-22", "vigente": true, "tipo": "legislacao",
-     "texto": "Tráfico de armas (Art. 18 Lei 10.826/03): importar, exportar, comerciar armas sem autorização. Pena: 8 a 16 anos. Crime formal. A internacionalidade não é elemento, mas majora a pena."},
-    {"id": "D21", "fonte": "CPP Art. 4º", "data": "1941-10-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Inquérito policial (Art. 4º CPP): procedimento administrativo inquisitório presidido pela autoridade policial. Características: inquisitório, sigiloso, escrito, indisponível. Prazo: 10 dias (preso), 30 dias (solto), prorrogável."},
-    {"id": "D22", "fonte": "CPP Art. 240", "data": "1941-10-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Busca e apreensão (Art. 240 CPP): domiciliar (mandado judicial) e pessoal (prescinde de mandado em flagrante ou fundada suspeita). Inviolabilidade de domicílio (Art. 5º, XI CF): exceções: flagrante, desastre, socorro, determinação judicial diurna."},
-    {"id": "D23", "fonte": "CPP Art. 158-A (Pacote Anticrime)", "data": "2019-12-24", "vigente": true, "tipo": "legislacao",
-     "texto": "Cadeia de custódia (Art. 158-A CPP - Pacote Anticrime): conjunto de procedimentos para preservação da integridade dos vestígios. Elementos: reconhecimento, isolamento, fixação, coleta, acondicionamento, transporte, recebimento, processamento, armazenamento, descarte."},
-    {"id": "D24", "fonte": "Doutrina - Atividade de Inteligência", "data": "2022-01-01", "vigente": true, "tipo": "doutrina",
-     "texto": "Atividade de inteligência policial: produção de conhecimento para subsidiar decisões de segurança pública. Ciclo: coleta, processamento, análise, disseminação. Diferencia-se da investigação criminal: busca antecipar ameaças, não apurar fatos passados."},
-    {"id": "D25", "fonte": "Lei 9.883/1999 (SISBIN)", "data": "1999-12-07", "vigente": true, "tipo": "legislacao",
-     "texto": "SISBIN (Sistema Brasileiro de Inteligência Lei 9.883/99): coordenado pela ABIN. Integra atividades de inteligência dos órgãos públicos. Princípios: objetividade, controle, imparcialidade, sigilo. Acesso restrito a agentes credenciados."},
-    {"id": "D26", "fonte": "CPP Art. 185 e CF Art. 5º LXIII", "data": "1941-10-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Interrogatório do acusado (Art. 185 CPP): direito ao silêncio (Art. 5º, LXIII CF). Presença de advogado obrigatória. Vedada a condução coercitiva para interrogatório (ADPF 395 e 444 STF). Confissão: valor probatório relativo."},
-    {"id": "D27", "fonte": "Lei 11.340/2006 (Lei Maria da Penha)", "data": "2006-08-07", "vigente": true, "tipo": "legislacao",
-     "texto": "Lei Maria da Penha (Lei 11.340/06): violência doméstica e familiar contra a mulher. Medidas protetivas (Art. 22): afastamento, proibição de aproximação, suspensão de armas. Delegacias especializadas (DEAM). Crime de feminicídio: Art. 121, §2º, VI CP."},
-    {"id": "D28", "fonte": "Lei 8.069/1990 (ECA)", "data": "1990-07-13", "vigente": true, "tipo": "legislacao",
-     "texto": "Estatuto da Criança e do Adolescente (Lei 8.069/90): ato infracional análogo ao crime: medidas socioeducativas. Internação: máximo 3 anos, liberação compulsória aos 21 anos. Semiliberdade, liberdade assistida, prestação de serviços à comunidade."},
-    {"id": "D29", "fonte": "Lei 9.613/1998 (Lavagem de Capitais)", "data": "1998-03-03", "vigente": true, "tipo": "legislacao",
-     "texto": "Lavagem de capitais (Lei 9.613/98): ocultar ou dissimular bens provenientes de crimes. Fases: colocação, ocultação, integração. Pena: 3 a 10 anos. Crimes antecedentes: qualquer infração penal. Delação premiada aplicável."},
-    {"id": "D30", "fonte": "Lei 13.869/2019 (Abuso de Autoridade)", "data": "2019-09-05", "vigente": true, "tipo": "legislacao",
-     "texto": "Abuso de autoridade (Lei 13.869/19): conduta do agente público que detenha ou prive a liberdade de alguém ilegalmente, submeta a situação de humilhação ou constrangimento, ou retarde injustificadamente operação de legítima defesa. Pena: detenção e multa."}
+    {
+      "id": "D01",
+      "fonte": "CP Art. 157",
+      "data": "1940-12-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Roubo (Art. 157 CP): subtração de coisa móvel mediante grave ameaça ou violência. Pena: 4 a 10 anos. Majorado com arma de fogo: 2/3 da pena. Roubo qualificado com morte: latrocínio (Art. 157, §3º, II)."
+    },
+    {
+      "id": "D02",
+      "fonte": "CP Art. 155",
+      "data": "1940-12-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Furto qualificado (Art. 155, §4º CP): com destruição de obstáculo, abuso de confiança, mediante fraude, escalada ou destreza. Pena: 2 a 8 anos. Furto simples: 1 a 4 anos."
+    },
+    {
+      "id": "D03",
+      "fonte": "CP Art. 157 §3º",
+      "data": "1940-12-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Latrocínio: roubo com resultado morte. Classificado pelo STF como crime hediondo. Pena: 20 a 30 anos. Súmula 610 STF: há latrocínio quando o homicídio se consuma."
+    },
+    {
+      "id": "D04",
+      "fonte": "CP Art. 158",
+      "data": "1940-12-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Extorsão (Art. 158 CP): constranger mediante violência ou ameaça a fazer, tolerar ou omitir algo, com vantagem econômica indevida. Pena: 4 a 10 anos. Distingue-se do roubo: na extorsão a vantagem depende do comportamento da vítima."
+    },
+    {
+      "id": "D05",
+      "fonte": "Lei 11.343/2006 Art. 33",
+      "data": "2006-08-23",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Tráfico de drogas (Art. 33 Lei 11.343/06): importar, exportar, vender, guardar, transportar drogas sem autorização. Pena: 5 a 15 anos. Crime inafiançável e insuscetível de sursis, graça ou anistia."
+    },
+    {
+      "id": "D06",
+      "fonte": "Lei 11.343/2006 Art. 33 §4º",
+      "data": "2006-08-23",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Tráfico privilegiado (Art. 33, §4º Lei 11.343/06): agente primário, bons antecedentes, não integrante de organização criminosa, não dedicado a atividades criminosas. Redução de pena: 1/6 a 2/3."
+    },
+    {
+      "id": "D07",
+      "fonte": "Lei 11.343/2006 Art. 35",
+      "data": "2006-08-23",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Associação ao tráfico (Art. 35 Lei 11.343/06): associação de 2 ou mais pessoas para praticar reiteradamente o tráfico. Pena: 3 a 10 anos. Distingue-se do concurso de agentes: exige estabilidade e permanência."
+    },
+    {
+      "id": "D08",
+      "fonte": "Lei 11.343/2006 Art. 28",
+      "data": "2006-08-23",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Uso de drogas (Art. 28 Lei 11.343/06): adquirir para consumo pessoal. Não é crime, é infração administrativa. Penas: advertência, prestação de serviços à comunidade, medida educativa."
+    },
+    {
+      "id": "D09",
+      "fonte": "Lei 12.850/2013 Art. 1º",
+      "data": "2013-08-02",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Organização criminosa (Lei 12.850/13): associação de 4 ou mais pessoas estruturalmente ordenada para obter vantagem de qualquer natureza mediante prática de infrações penais de pena máxima superior a 4 anos. Pena: 3 a 8 anos."
+    },
+    {
+      "id": "D10",
+      "fonte": "Lei 12.850/2013 Art. 4º",
+      "data": "2013-08-02",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Colaboração premiada (Art. 4º Lei 12.850/13): acordo entre Ministério Público e colaborador. Benefícios: redução de 1/3 a 2/3 da pena, substituição, perdão judicial. Eficácia probatória: corroboração com outros elementos."
+    },
+    {
+      "id": "D11",
+      "fonte": "Lei 12.850/2013 Art. 10",
+      "data": "2013-08-02",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Infiltração policial (Art. 10 Lei 12.850/13): infiltração de agentes de polícia em tarefas de investigação de organizações criminosas. Autorização judicial obrigatória. Prazo: até 6 meses, renovável por igual período."
+    },
+    {
+      "id": "D12",
+      "fonte": "Lei 9.296/1996",
+      "data": "1996-07-24",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Interceptação telemática (Lei 9.296/96): interceptação de comunicações em sistemas de informática e telemática. Requisitos: indícios razoáveis, impossibilidade de outros meios, crime punido com reclusão. Prazo: 15 dias, renovável."
+    },
+    {
+      "id": "D13",
+      "fonte": "Lei 8.072/1990",
+      "data": "1990-07-25",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Crimes hediondos (Lei 8.072/90): rol taxativo incluindo latrocínio, extorsão com morte, estupro, tráfico, genocídio, tortura, terrorismo. Vedados: fiança, graça, anistia. Progressão de regime: após cumprimento de 40% (réu primário) ou 60% (reincidente)."
+    },
+    {
+      "id": "D14",
+      "fonte": "Lei 9.455/1997",
+      "data": "1997-04-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Tortura (Lei 9.455/97): constranger alguém com sofrimento físico ou mental para obter informação, confissão, ou para aplicar castigo. Pena: 2 a 8 anos. Crime inafiançável, insuscetível de graça. Agente público: pena aumentada."
+    },
+    {
+      "id": "D15",
+      "fonte": "CPP Art. 312",
+      "data": "1941-10-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Prisão preventiva (Art. 312 CPP): garantia da ordem pública, ordem econômica, conveniência da instrução, assegurar aplicação da lei penal. Requisito: prova da existência do crime e indício de autoria. Vedada para crimes com pena máxima ≤ 4 anos."
+    },
+    {
+      "id": "D16",
+      "fonte": "CF Art. 5º LXVIII",
+      "data": "1988-10-05",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Habeas corpus (Art. 5º, LXVIII CF): instrumento constitucional para proteger a liberdade de locomoção quando ameaçada por ilegalidade ou abuso de poder. HC preventivo: salvo-conduto. HC liberatório: relaxamento da prisão."
+    },
+    {
+      "id": "D17",
+      "fonte": "CPP Art. 301",
+      "data": "1941-10-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Prisão em flagrante (Art. 301 CPP): qualquer cidadão pode prender quem esteja em flagrante delito. Espécies: próprio, impróprio, presumido, esperado. Lavratura do APF: 24 horas. Conversão em preventiva: audiência de custódia."
+    },
+    {
+      "id": "D18",
+      "fonte": "CNJ Resolução 213/2015",
+      "data": "2015-12-15",
+      "vigente": true,
+      "tipo": "resolucao",
+      "texto": "Audiência de custódia (Resolução CNJ 213/2015): apresentação do preso ao juiz em até 24 horas após a prisão. Finalidade: verificar legalidade da prisão, identificar violência ou tortura, decidir sobre a manutenção ou relaxamento da prisão."
+    },
+    {
+      "id": "D19",
+      "fonte": "Lei 10.826/2003 Arts. 12-14",
+      "data": "2003-12-22",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Estatuto do Desarmamento (Lei 10.826/03): porte ilegal de arma de fogo (Art. 14): pena 2 a 4 anos. Posse irregular (Art. 12): 1 a 3 anos. Comércio ilegal (Art. 17): 6 a 12 anos. Arma de uso restrito: penas dobradas."
+    },
+    {
+      "id": "D20",
+      "fonte": "Lei 10.826/2003 Art. 18",
+      "data": "2003-12-22",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Tráfico de armas (Art. 18 Lei 10.826/03): importar, exportar, comerciar armas sem autorização. Pena: 8 a 16 anos. Crime formal. A internacionalidade não é elemento, mas majora a pena."
+    },
+    {
+      "id": "D21",
+      "fonte": "CPP Art. 4º",
+      "data": "1941-10-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Inquérito policial (Art. 4º CPP): procedimento administrativo inquisitório presidido pela autoridade policial. Características: inquisitório, sigiloso, escrito, indisponível. Prazo: 10 dias (preso), 30 dias (solto), prorrogável."
+    },
+    {
+      "id": "D22",
+      "fonte": "CPP Art. 240",
+      "data": "1941-10-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Busca e apreensão (Art. 240 CPP): domiciliar (mandado judicial) e pessoal (prescinde de mandado em flagrante ou fundada suspeita). Inviolabilidade de domicílio (Art. 5º, XI CF): exceções: flagrante, desastre, socorro, determinação judicial diurna."
+    },
+    {
+      "id": "D23",
+      "fonte": "CPP Art. 158-A (Pacote Anticrime)",
+      "data": "2019-12-24",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Cadeia de custódia (Art. 158-A CPP - Pacote Anticrime): conjunto de procedimentos para preservação da integridade dos vestígios. Elementos: reconhecimento, isolamento, fixação, coleta, acondicionamento, transporte, recebimento, processamento, armazenamento, descarte."
+    },
+    {
+      "id": "D24",
+      "fonte": "Doutrina - Atividade de Inteligência",
+      "data": "2022-01-01",
+      "vigente": true,
+      "tipo": "doutrina",
+      "texto": "Atividade de inteligência policial: produção de conhecimento para subsidiar decisões de segurança pública. Ciclo: coleta, processamento, análise, disseminação. Diferencia-se da investigação criminal: busca antecipar ameaças, não apurar fatos passados."
+    },
+    {
+      "id": "D25",
+      "fonte": "Lei 9.883/1999 (SISBIN)",
+      "data": "1999-12-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "SISBIN (Sistema Brasileiro de Inteligência Lei 9.883/99): coordenado pela ABIN. Integra atividades de inteligência dos órgãos públicos. Princípios: objetividade, controle, imparcialidade, sigilo. Acesso restrito a agentes credenciados."
+    },
+    {
+      "id": "D26",
+      "fonte": "CPP Art. 185 e CF Art. 5º LXIII",
+      "data": "1941-10-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Interrogatório do acusado (Art. 185 CPP): direito ao silêncio (Art. 5º, LXIII CF). Presença de advogado obrigatória. Vedada a condução coercitiva para interrogatório (ADPF 395 e 444 STF). Confissão: valor probatório relativo."
+    },
+    {
+      "id": "D27",
+      "fonte": "Lei 11.340/2006 (Lei Maria da Penha)",
+      "data": "2006-08-07",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Lei Maria da Penha (Lei 11.340/06): violência doméstica e familiar contra a mulher. Medidas protetivas (Art. 22): afastamento, proibição de aproximação, suspensão de armas. Delegacias especializadas (DEAM). Crime de feminicídio: Art. 121, §2º, VI CP."
+    },
+    {
+      "id": "D28",
+      "fonte": "Lei 8.069/1990 (ECA)",
+      "data": "1990-07-13",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Estatuto da Criança e do Adolescente (Lei 8.069/90): ato infracional análogo ao crime: medidas socioeducativas. Internação: máximo 3 anos, liberação compulsória aos 21 anos. Semiliberdade, liberdade assistida, prestação de serviços à comunidade."
+    },
+    {
+      "id": "D29",
+      "fonte": "Lei 9.613/1998 (Lavagem de Capitais)",
+      "data": "1998-03-03",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Lavagem de capitais (Lei 9.613/98): ocultar ou dissimular bens provenientes de crimes. Fases: colocação, ocultação, integração. Pena: 3 a 10 anos. Crimes antecedentes: qualquer infração penal. Delação premiada aplicável."
+    },
+    {
+      "id": "D30",
+      "fonte": "Lei 13.869/2019 (Abuso de Autoridade)",
+      "data": "2019-09-05",
+      "vigente": true,
+      "tipo": "legislacao",
+      "texto": "Abuso de autoridade (Lei 13.869/19): conduta do agente público que detenha ou prive a liberdade de alguém ilegalmente, submeta a situação de humilhação ou constrangimento, ou retarde injustificadamente operação de legítima defesa. Pena: detenção e multa."
+    }
   ],
   "queries_benchmark": [
-    {"id": "Q01", "query": "requisitos tráfico privilegiado pena redução", "relevancia": {"D06": 2, "D05": 1, "D07": 1, "D08": 1}},
-    {"id": "Q02", "query": "roubo arma de fogo pena majorada", "relevancia": {"D01": 2, "D19": 1, "D20": 1}},
-    {"id": "Q03", "query": "prisão preventiva requisitos fundamento", "relevancia": {"D15": 2, "D16": 1, "D17": 1, "D18": 1}},
-    {"id": "Q04", "query": "organização criminosa quatro pessoas estruturada", "relevancia": {"D09": 2, "D10": 1, "D11": 1, "D07": 1}},
-    {"id": "Q05", "query": "latrocínio roubo resultado morte hediondo", "relevancia": {"D03": 2, "D13": 1, "D01": 1}},
-    {"id": "Q06", "query": "colaboração premiada benefícios redução pena", "relevancia": {"D10": 2, "D09": 1, "D29": 1}},
-    {"id": "Q07", "query": "habeas corpus liberdade locomoção ilegalidade", "relevancia": {"D16": 2, "D15": 1, "D17": 1}},
-    {"id": "Q08", "query": "interceptação comunicação telemática prazo judicial", "relevancia": {"D12": 2, "D11": 1, "D25": 1}},
-    {"id": "Q09", "query": "busca apreensão domiciliar mandado judicial inviolabilidade", "relevancia": {"D22": 2, "D21": 1, "D23": 1}},
-    {"id": "Q10", "query": "cadeia de custódia vestígios preservação", "relevancia": {"D23": 2, "D21": 1, "D22": 1}},
-    {"id": "Q11", "query": "crimes hediondos rol progressão regime", "relevancia": {"D13": 2, "D03": 1, "D14": 1, "D05": 1}},
-    {"id": "Q12", "query": "porte ilegal arma fogo pena estatuto desarmamento", "relevancia": {"D19": 2, "D20": 1, "D01": 1}},
-    {"id": "Q13", "query": "infiltração policial organização criminosa autorização judicial", "relevancia": {"D11": 2, "D09": 1, "D12": 1}},
-    {"id": "Q14", "query": "audiência custódia prazo apresentação preso juiz", "relevancia": {"D18": 2, "D17": 1, "D15": 1}},
-    {"id": "Q15", "query": "lavagem capitais fases ocultar dissimular", "relevancia": {"D29": 2, "D09": 1, "D10": 1}},
-    {"id": "Q16", "query": "violência doméstica medidas protetivas afastamento", "relevancia": {"D27": 2, "D14": 1}},
-    {"id": "Q17", "query": "ato infracional adolescente medidas socioeducativas internação", "relevancia": {"D28": 2}},
-    {"id": "Q18", "query": "tortura agente público sofrimento físico mental", "relevancia": {"D14": 2, "D13": 1, "D30": 1}},
-    {"id": "Q19", "query": "inquérito policial prazo sigiloso inquisitório", "relevancia": {"D21": 2, "D22": 1}},
-    {"id": "Q20", "query": "abuso autoridade policial privação liberdade humilhação", "relevancia": {"D30": 2, "D14": 1, "D16": 1}}
+    {
+      "id": "Q01",
+      "query": "requisitos tráfico privilegiado pena redução",
+      "relevancia": {
+        "D06": 2,
+        "D05": 1,
+        "D07": 1,
+        "D08": 1
+      }
+    },
+    {
+      "id": "Q02",
+      "query": "roubo arma de fogo pena majorada",
+      "relevancia": {
+        "D01": 2,
+        "D19": 1,
+        "D20": 1
+      }
+    },
+    {
+      "id": "Q03",
+      "query": "prisão preventiva requisitos fundamento",
+      "relevancia": {
+        "D15": 2,
+        "D16": 1,
+        "D17": 1,
+        "D18": 1
+      }
+    },
+    {
+      "id": "Q04",
+      "query": "organização criminosa quatro pessoas estruturada",
+      "relevancia": {
+        "D09": 2,
+        "D10": 1,
+        "D11": 1,
+        "D07": 1
+      }
+    },
+    {
+      "id": "Q05",
+      "query": "latrocínio roubo resultado morte hediondo",
+      "relevancia": {
+        "D03": 2,
+        "D13": 1,
+        "D01": 1
+      }
+    },
+    {
+      "id": "Q06",
+      "query": "colaboração premiada benefícios redução pena",
+      "relevancia": {
+        "D10": 2,
+        "D09": 1,
+        "D29": 1
+      }
+    },
+    {
+      "id": "Q07",
+      "query": "habeas corpus liberdade locomoção ilegalidade",
+      "relevancia": {
+        "D16": 2,
+        "D15": 1,
+        "D17": 1
+      }
+    },
+    {
+      "id": "Q08",
+      "query": "interceptação comunicação telemática prazo judicial",
+      "relevancia": {
+        "D12": 2,
+        "D11": 1,
+        "D25": 1
+      }
+    },
+    {
+      "id": "Q09",
+      "query": "busca apreensão domiciliar mandado judicial inviolabilidade",
+      "relevancia": {
+        "D22": 2,
+        "D21": 1,
+        "D23": 1
+      }
+    },
+    {
+      "id": "Q10",
+      "query": "cadeia de custódia vestígios preservação",
+      "relevancia": {
+        "D23": 2,
+        "D21": 1,
+        "D22": 1
+      }
+    },
+    {
+      "id": "Q11",
+      "query": "crimes hediondos rol progressão regime",
+      "relevancia": {
+        "D13": 2,
+        "D03": 1,
+        "D14": 1,
+        "D05": 1
+      }
+    },
+    {
+      "id": "Q12",
+      "query": "porte ilegal arma fogo pena estatuto desarmamento",
+      "relevancia": {
+        "D19": 2,
+        "D20": 1,
+        "D01": 1
+      }
+    },
+    {
+      "id": "Q13",
+      "query": "infiltração policial organização criminosa autorização judicial",
+      "relevancia": {
+        "D11": 2,
+        "D09": 1,
+        "D12": 1
+      }
+    },
+    {
+      "id": "Q14",
+      "query": "audiência custódia prazo apresentação preso juiz",
+      "relevancia": {
+        "D18": 2,
+        "D17": 1,
+        "D15": 1
+      }
+    },
+    {
+      "id": "Q15",
+      "query": "lavagem capitais fases ocultar dissimular",
+      "relevancia": {
+        "D29": 2,
+        "D09": 1,
+        "D10": 1
+      }
+    },
+    {
+      "id": "Q16",
+      "query": "violência doméstica medidas protetivas afastamento",
+      "relevancia": {
+        "D27": 2,
+        "D14": 1
+      }
+    },
+    {
+      "id": "Q17",
+      "query": "ato infracional adolescente medidas socioeducativas internação",
+      "relevancia": {
+        "D28": 2
+      }
+    },
+    {
+      "id": "Q18",
+      "query": "tortura agente público sofrimento físico mental",
+      "relevancia": {
+        "D14": 2,
+        "D13": 1,
+        "D30": 1
+      }
+    },
+    {
+      "id": "Q19",
+      "query": "inquérito policial prazo sigiloso inquisitório",
+      "relevancia": {
+        "D21": 2,
+        "D22": 1
+      }
+    },
+    {
+      "id": "Q20",
+      "query": "abuso autoridade policial privação liberdade humilhação",
+      "relevancia": {
+        "D30": 2,
+        "D14": 1,
+        "D16": 1
+      }
+    }
   ]
 }

@@ -24,6 +24,9 @@ from functools import partial
 from haystack import Document
 
 from . import config
+from .log import obter_logger
+
+log = obter_logger(__name__)
 
 LIMIAR_ENTIDADES = 30
 MIN_PALAVRAS_GRAFO = 800
@@ -43,8 +46,10 @@ def _entidades_distintas(conteudo):
 
 def decidir_destino(dados, override="auto"):
     if override in ("opensearch", "grafo"):
+        log.info("Destino forcado pelo usuario: %s", override)
         return override, f"forcado pelo usuario (override={override})"
     n_ent = _entidades_distintas(dados.get("conteudo", ""))
+    log.debug("Heuristica de destino: %d entidades distintas (limiar=%d)", n_ent, LIMIAR_ENTIDADES)
     if n_ent >= LIMIAR_ENTIDADES:
         return "grafo", f"texto longo e rico em entidades ({n_ent} distintas >= {LIMIAR_ENTIDADES}) -> multi-hop"
     return "opensearch", f"texto/tabela direto ({n_ent} entidades distintas < {LIMIAR_ENTIDADES})"
@@ -70,6 +75,7 @@ def avaliar_chunking(dados, override="auto"):
         return override, f"forcado pelo usuario (chunking={override})"
 
     n_pal, n_tit, n_art = len(conteudo.split()), _n_titulos(conteudo), _n_artigos(conteudo)
+    log.debug("Sinais de chunking: %d palavras, %d titulos, %d 'Art.'", n_pal, n_tit, n_art)
     if n_tit >= 3:
         return "hierarquico", f"documento estruturado em secoes ({n_tit} titulos) -> hierarquico"
     if n_art >= 5:
@@ -101,6 +107,7 @@ def chunkar(conteudo, tecnica):
         EmbeddingBasedDocumentSplitter, HierarchicalDocumentSplitter,
         RecursiveDocumentSplitter)
 
+    log.debug("Chunkando com tecnica '%s' (%d caracteres)", tecnica, len(conteudo))
     if tecnica == "fixo":
         return _rodar(DocumentSplitter(split_by="word", split_length=200, split_overlap=0), conteudo)
     if tecnica == "recursivo":
@@ -135,10 +142,13 @@ def _store_opensearch():
 def indexar_opensearch(docs, meta):
     for d in docs:
         d.meta.update(meta)
+    log.info("Gerando embeddings (Ollama) para %d chunk(s)...", len(docs))
     embedder = _ollama_doc_embedder()
     if hasattr(embedder, "warm_up"):
         embedder.warm_up()
     docs_emb = embedder.run(documents=docs)["documents"]
+    log.info("Gravando %d documento(s) no OpenSearch (indice '%s')...",
+             len(docs_emb), config.config_opensearch()["indice"])
     _store_opensearch().write_documents(docs_emb)
     return len(docs_emb)
 
@@ -170,12 +180,14 @@ async def _criar_lightrag():
 
 def indexar_grafo(conteudo):
     async def _run():
+        log.info("Construindo grafo no LightRAG (varias chamadas de LLM, pode demorar)...")
         rag = await _criar_lightrag()
         try:
             await rag.ainsert(conteudo)
         finally:
             await rag.finalize_storages()
     asyncio.run(_run())
+    log.info("Grafo atualizado no LightRAG (storage: %s)", config.PASTA_RAG_STORAGE)
     return 1
 
 
@@ -184,13 +196,16 @@ def indexar_grafo(conteudo):
 # ---------------------------------------------------------------------------
 def indexar(dados, meta, destino_override="auto", chunking_override="auto"):
     destino, motivo_destino = decidir_destino(dados, destino_override)
+    log.info("Destino de indexacao: %s (%s)", destino, motivo_destino)
     if destino == "grafo":
         n = indexar_grafo(dados.get("conteudo", ""))
         return {"destino": destino, "motivo_destino": motivo_destino,
                 "chunking": "grafo (LightRAG gerencia)", "motivo_chunking": "destino=grafo",
                 "n_chunks": n}
     tecnica, motivo_chunking = avaliar_chunking(dados, chunking_override)
+    log.info("Tecnica de chunking: %s (%s)", tecnica, motivo_chunking)
     docs = chunkar(dados.get("conteudo", ""), tecnica)
     n = indexar_opensearch(docs, meta)
+    log.info("Indexacao concluida: %d chunk(s) no OpenSearch", n)
     return {"destino": destino, "motivo_destino": motivo_destino,
             "chunking": tecnica, "motivo_chunking": motivo_chunking, "n_chunks": n}

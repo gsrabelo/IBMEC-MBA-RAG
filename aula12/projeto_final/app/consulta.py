@@ -11,6 +11,9 @@ Mantido simples: monta o contexto, gera a resposta e devolve as fontes.
 import asyncio
 
 from . import config, indexacao
+from .log import obter_logger
+
+log = obter_logger(__name__)
 
 
 def _groq():
@@ -34,14 +37,17 @@ def consultar_opensearch(pergunta, top_k):
 
     base_url, modelo = config.config_ollama()
     store = indexacao._store_opensearch()
+    log.info("Consulta OpenSearch (top_k=%d): %r", top_k, pergunta)
     pipe = Pipeline()
     pipe.add_component("embedder", OllamaTextEmbedder(model=modelo, url=base_url))
     pipe.add_component("retriever", OpenSearchEmbeddingRetriever(document_store=store, top_k=top_k))
     pipe.connect("embedder.embedding", "retriever.query_embedding")
     docs = pipe.run({"embedder": {"text": pergunta}})["retriever"]["documents"]
+    log.info("Recuperados %d trecho(s) do OpenSearch", len(docs))
 
     cliente, gmodelo = _groq()
     ctx = "\n".join(f"- {d.content}" for d in docs) or "(sem contexto)"
+    log.info("Gerando resposta com a Groq (modelo %s)...", gmodelo)
     resp = cliente.chat.completions.create(
         model=gmodelo, messages=[{"role": "user", "content": PROMPT.format(ctx=ctx, q=pergunta)}],
         temperature=0.2, max_tokens=500)
@@ -51,6 +57,7 @@ def consultar_opensearch(pergunta, top_k):
 
 
 def consultar_grafo(pergunta):
+    log.info("Consulta ao GRAFO (LightRAG, modo hybrid): %r", pergunta)
     async def _run():
         from lightrag import QueryParam
         rag = await indexacao._criar_lightrag()
