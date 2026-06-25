@@ -10,3 +10,5 @@ aula9/rag_storage/
 aula9/server/rag_storage/
 *.png
 *.log
+.DS_Store
+*/.DS_Store
