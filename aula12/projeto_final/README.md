@@ -16,12 +16,33 @@ Upload  →  [1] probe (sinais baratos: extensão, texto, imagens)
         →  [3b] Se OpenSearch, AVALIADOR escolhe a melhor TÉCNICA DE CHUNKING
                  (fixo | recursivo | sentence-window | semântico | hierárquico | tabela)
         →  [4] /consulta roteia a busca (OpenSearch ou grafo) + gera resposta (Groq)
+                 no OpenSearch, aplica a TÉCNICA escolhida (baseline | multi_query |
+                 rag_fusion | step_back)
 ```
+
+**Técnicas de query enhancement na busca** (parâmetro `tecnica` no `/consulta`, só OpenSearch):
+
+| Técnica | O que faz |
+|---|---|
+| `baseline` | 1 embedding → 1 busca densa (padrão) |
+| `multi_query` | LLM gera N variações da pergunta → busca cada uma → **dedup** por id/score |
+| `rag_fusion` | igual ao multi_query, mas funde os rankings com **RRF** (Reciprocal Rank Fusion) |
+| `step_back` | LLM gera uma pergunta mais **geral** → busca [específica + geral] → dedup |
+
+Tudo roda dentro de um pipeline Haystack (`app/busca_avancada.py`), então o LangFuse
+rastreia também a chamada de LLM que reescreve a pergunta. O grafo (LightRAG) mantém seu
+`aquery` híbrido próprio (a técnica não se aplica a ele).
 
 - **Extração**: decidida por um **Agente** (LLM tool-calling, aula 10) a partir dos sinais
   do documento. Cada ferramenta extrai e devolve só um resumo ao agente (o conteúdo grande
   fica num cache, fora do contexto do LLM).
 - **Figuras/escaneados**: viram **texto via OCR do Docling** (`do_ocr=True`).
+- **LLM agnóstico a provedor**: todos os pontos de LLM (agente de extração, geração na
+  busca, construção do grafo) usam um endpoint **OpenAI-compatible** configurável via
+  `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL` (+ rótulo `LLM_PROVIDER`) no `.env`. Funciona
+  com Groq, OpenAI, OpenRouter, Together, DeepSeek, vLLM/Ollama local, etc. — basta trocar os
+  3 valores. `GROQ_API_KEY` continua aceito por compatibilidade. Centralizado em
+  `config.config_llm()`.
 - **Destino de indexação**: heurística transparente (densidade de entidades) escolhe
   **OpenSearch** (padrão) ou **LightRAG** (grafo); dá para forçar via `estrategia=auto|opensearch|grafo`.
 - **Estratégia de chunking** (só no OpenSearch): um **avaliador transparente** analisa a
@@ -68,7 +89,7 @@ docker compose -f ../datasets/docker-compose.yml up -d     # ou seu OpenSearch l
 
 # 2) modelos / chaves
 ollama pull nomic-embed-text
-cp .env.example .env        # preencha GROQ_API_KEY (e ajuste OPENSEARCH_*)
+cp .env.example .env        # preencha LLM_API_KEY/LLM_BASE_URL/LLM_MODEL (e ajuste OPENSEARCH_*)
 
 # 3) dependências e API
 pip install -r requirements.txt
@@ -82,9 +103,21 @@ python cliente_exemplo.py algum_documento.pdf
 # ou a doc interativa:  http://localhost:8000/docs
 ```
 
-A **interface Gradio** (`interface.py`) tem 3 abas: **Ingestão** (upload + relatório da
-decisão, com override de destino e de chunking), **Consulta** (pergunta → resposta + fontes)
-e **Status** (`/health`). Ela só consome a API — não duplica lógica de RAG.
+A **interface Gradio** (`interface.py`) tem as abas: **Ingestão** (upload + relatório da
+decisão, com override de destino e de chunking), **Consulta** (pergunta → resposta + fontes),
+**Grafo (LightRAG)** e **Status** (`/health`). Ela só consome a API — não duplica lógica de RAG.
+
+A aba **Configuracoes (prompts)** deixa o aluno **ver e editar** os prompts em runtime: o
+prompt final do RAG, o de variações (multi_query/rag_fusion), o de step-back e o system do
+agente de extração. Salvar persiste em `prompts.json` (sobrevive a reinícios) e vale para as
+próximas buscas/ingestões; há botões **Restaurar padrão** e **Recarregar**. Os marcadores
+`{{ documents }}`/`{{ pergunta }}` devem ser mantidos nos prompts de busca.
+
+A aba **Grafo** só aparece quando existe um grafo no LightRAG: começa oculta e fica visível
+**automaticamente** assim que uma ingestão cria o grafo (destino `grafo`) — sem reiniciar a
+interface (a aba usa `visible` + `gr.update`). Se o grafo já existir no startup, ela já vem
+visível. Exibe a visualização interativa (`GET /graph/html`, vis-network) num iframe, mais as
+estatísticas (nº de nós/arestas e entidades mais conectadas), e tem um botão **Atualizar**.
 
 ## Endpoints
 
@@ -92,6 +125,11 @@ e **Status** (`/health`). Ela só consome a API — não duplica lógica de RAG.
 |---|---|---|
 | POST | `/ingestao` | upload de documento → extrai (agente) → indexa (heurística) → **relatório da decisão** |
 | POST | `/consulta` | pergunta → resposta RAG + fontes (roteado p/ OpenSearch ou grafo) |
+| GET | `/graph` | dados do grafo do LightRAG (JSON): `exists`, nº de nós/arestas, hubs, nós/arestas |
+| GET | `/graph/html` | visualização interativa do grafo (vis-network) — usada num iframe pela interface |
+| GET | `/config/prompts` | prompts atuais (rag, variacoes, stepback, extracao_system) |
+| PUT | `/config/prompts` | edita os prompts (só os enviados) e persiste em `prompts.json` |
+| POST | `/config/prompts/reset` | restaura os prompts padrão |
 | GET | `/health` | status de OpenSearch, Groq, embedding, LangFuse |
 | GET | `/metrics` | contadores (ingestões, consultas, erros, uptime) |
 
@@ -134,6 +172,12 @@ Resposta (resumida) — mostra **a decisão**, para o aluno entender o raciocín
   perguntas multi-hop). Ajuste `LIMIAR_ENTIDADES` / `MIN_PALAVRAS_GRAFO` em `indexacao.py`.
 - **LLM**: use `llama-3.3-70b-versatile` (tool calling). **Não use gpt-oss** (reasoning):
   o tool-calling do agente fica instável.
+- **Observabilidade da busca (Langfuse)**: preencha `LANGFUSE_PUBLIC_KEY`/`LANGFUSE_SECRET_KEY`
+  (e `LANGFUSE_BASE_URL`) no `.env` — o tracing liga sozinho. A busca no **OpenSearch** roda como
+  um pipeline Haystack instrumentado por `LangfuseConnector` (1 trace por busca: embedding →
+  recuperação → geração); a busca no **grafo** (LightRAG) é rastreada com `@observe`. Sem as
+  chaves, tudo funciona normalmente, só sem trace. O preparo do tracing fica em `app/__init__.py`
+  (precisa rodar antes de importar o Haystack). O `GET /health` mostra `langfuse: on/off`.
 - **Pesos**: Docling baixa modelos de layout/OCR na 1ª execução; o LightRAG faz várias
   chamadas de LLM ao construir o grafo (rota mais cara — por isso é seletiva).
 - **Produção**: o `docker-compose` traz OpenSearch + Dashboards + LangFuse; em produção,

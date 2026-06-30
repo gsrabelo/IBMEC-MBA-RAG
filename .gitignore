@@ -8,6 +8,7 @@ __pycache__/
 .png
 aula9/rag_storage/
 aula9/server/rag_storage/
+aula12/projeto_final/rag_storage/
 *.png
 *.log
 .DS_Store

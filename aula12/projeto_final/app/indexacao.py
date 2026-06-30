@@ -162,7 +162,7 @@ async def _criar_lightrag():
     from lightrag.llm.openai import openai_complete_if_cache
     from lightrag.utils import EmbeddingFunc
 
-    api_key, modelo, base_url = config.config_groq()
+    api_key, modelo, base_url = config.config_llm()
     o_base, o_modelo = config.config_ollama()
 
     async def llm_func(prompt, system_prompt=None, history_messages=None, **kwargs):
@@ -178,6 +178,24 @@ async def _criar_lightrag():
     return rag
 
 
+def rodar_async(coro_factory):
+    """Roda uma corrotina com seguranca, HAJA ou NAO um event loop ativo.
+
+    O LightRAG e assincrono. Chamar asyncio.run() dentro de um endpoint 'async def'
+    do FastAPI quebra ('asyncio.run() cannot be called from a running event loop').
+    Aqui: se nao ha loop, usa asyncio.run direto; se ja ha um loop rodando, executa
+    numa thread separada (que tem o proprio loop).
+    """
+    import concurrent.futures
+
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro_factory())  # sem loop ativo (caso comum)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+        return ex.submit(lambda: asyncio.run(coro_factory())).result()
+
+
 def indexar_grafo(conteudo):
     async def _run():
         log.info("Construindo grafo no LightRAG (varias chamadas de LLM, pode demorar)...")
@@ -186,7 +204,7 @@ def indexar_grafo(conteudo):
             await rag.ainsert(conteudo)
         finally:
             await rag.finalize_storages()
-    asyncio.run(_run())
+    rodar_async(_run)
     log.info("Grafo atualizado no LightRAG (storage: %s)", config.PASTA_RAG_STORAGE)
     return 1
 

@@ -24,10 +24,28 @@ load_dotenv(PASTA_PROJETO / ".env")
 DIMENSAO_EMBEDDING = {"nomic-embed-text": 768, "mxbai-embed-large": 1024, "bge-m3": 1024}
 
 
-def config_groq():
-    return (os.getenv("GROQ_API_KEY", ""),
-            os.getenv("LLM_MODEL", "llama-3.3-70b-versatile"),
-            "https://api.groq.com/openai/v1")
+def config_llm():
+    """LLM AGNOSTICO a provedor (endpoint OpenAI-compativel). Retorna (api_key, modelo, base_url).
+
+    Funciona com qualquer provedor que exponha API no formato OpenAI: Groq, OpenAI,
+    Together, OpenRouter, Fireworks, DeepSeek, vLLM/Ollama local, etc. Basta apontar
+    LLM_BASE_URL/LLM_API_KEY/LLM_MODEL no .env. Mantem compatibilidade com GROQ_API_KEY.
+    """
+    api_key = (os.getenv("LLM_API_KEY") or os.getenv("GROQ_API_KEY")
+               or os.getenv("OPENAI_API_KEY", ""))
+    modelo = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+    base_url = (os.getenv("LLM_BASE_URL") or os.getenv("GROQ_BASE_URL")
+                or "https://api.groq.com/openai/v1")
+    return api_key, modelo, base_url
+
+
+def provedor_llm():
+    """Rotulo do provedor (apenas informativo, p/ logs/health)."""
+    return os.getenv("LLM_PROVIDER", "groq")
+
+
+# compatibilidade: codigo/aulas antigas ainda chamam config_groq()
+config_groq = config_llm
 
 
 def config_ollama():

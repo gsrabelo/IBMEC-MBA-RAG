@@ -26,6 +26,8 @@ class ConsultaRequest(BaseModel):
     pergunta: str
     destino: str = Field("auto", description="auto | opensearch | grafo")
     top_k: int = 5
+    tecnica: str = Field("baseline",
+                         description="baseline | multi_query | rag_fusion | step_back (so no OpenSearch)")
 
 
 class ConsultaResponse(BaseModel):
@@ -39,3 +41,11 @@ class IngestaoResponse(BaseModel):
     ok: bool
     relatorio: Optional[RelatorioIngestao] = None
     erro: Optional[str] = None
+
+
+class PromptsConfig(BaseModel):
+    """Edicao dos prompts (todos opcionais; so os enviados sao atualizados)."""
+    rag: Optional[str] = None
+    variacoes: Optional[str] = None
+    stepback: Optional[str] = None
+    extracao_system: Optional[str] = None

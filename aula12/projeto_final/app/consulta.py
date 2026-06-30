@@ -1,14 +1,15 @@
 """
-consulta.py - RAG de consulta, roteado para o storage certo.
+consulta.py - RAG de consulta (busca), roteado por storage, com OBSERVABILIDADE Langfuse
+e TECNICAS de query enhancement (baseline | multi_query | rag_fusion | step_back).
 
 destino:
-  - 'opensearch' (ou 'auto'): busca densa (Ollama + OpenSearch) + geracao (Groq).
-  - 'grafo'                  : consulta o LightRAG (modo hibrido) sobre o grafo.
+  - 'opensearch' (ou 'auto'): pipeline Haystack montado em busca_avancada.construir(tecnica)
+    (embed/reescrita -> recuperacao -> prompt -> Groq), instrumentado por LangfuseConnector.
+  - 'grafo'                  : LightRAG (modo hibrido), rastreado com @observe do Langfuse.
 
-Mantido simples: monta o contexto, gera a resposta e devolve as fontes.
+A observabilidade so liga se LANGFUSE_PUBLIC_KEY/SECRET_KEY existirem (.env). O preparo do
+tracing e feito em app/__init__.py, antes de qualquer import do Haystack.
 """
-
-import asyncio
 
 from . import config, indexacao
 from .log import obter_logger
@@ -16,62 +17,60 @@ from .log import obter_logger
 log = obter_logger(__name__)
 
 
-def _groq():
-    from openai import OpenAI
+# ---------------------------------------------------------------------------
+# Busca no OpenSearch (com tecnica de query enhancement) - ver busca_avancada.py
+# ---------------------------------------------------------------------------
+def consultar_opensearch(pergunta, top_k, tecnica="baseline"):
+    from . import busca_avancada
 
-    api_key, modelo, base_url = config.config_groq()
-    return OpenAI(api_key=api_key, base_url=base_url), modelo
-
-
-PROMPT = ("Voce e um assistente juridico. Responda APENAS com base nos trechos abaixo, de "
-          "forma objetiva. Se nao constar, diga que nao consta.\n\nTrechos:\n{ctx}\n\n"
-          "Pergunta: {q}\nResposta:")
-
-
-def consultar_opensearch(pergunta, top_k):
-    from haystack import Pipeline
-    from haystack_integrations.components.embedders.ollama import OllamaTextEmbedder
-    from haystack_integrations.components.retrievers.opensearch import (
-        OpenSearchEmbeddingRetriever,
-    )
-
-    base_url, modelo = config.config_ollama()
-    store = indexacao._store_opensearch()
-    log.info("Consulta OpenSearch (top_k=%d): %r", top_k, pergunta)
-    pipe = Pipeline()
-    pipe.add_component("embedder", OllamaTextEmbedder(model=modelo, url=base_url))
-    pipe.add_component("retriever", OpenSearchEmbeddingRetriever(document_store=store, top_k=top_k))
-    pipe.connect("embedder.embedding", "retriever.query_embedding")
-    docs = pipe.run({"embedder": {"text": pergunta}})["retriever"]["documents"]
-    log.info("Recuperados %d trecho(s) do OpenSearch", len(docs))
-
-    cliente, gmodelo = _groq()
-    ctx = "\n".join(f"- {d.content}" for d in docs) or "(sem contexto)"
-    log.info("Gerando resposta com a Groq (modelo %s)...", gmodelo)
-    resp = cliente.chat.completions.create(
-        model=gmodelo, messages=[{"role": "user", "content": PROMPT.format(ctx=ctx, q=pergunta)}],
-        temperature=0.2, max_tokens=500)
+    log.info("Consulta OpenSearch (tecnica=%s, top_k=%d): %r", tecnica, top_k, pergunta)
+    pipe, inputs, chave_docs = busca_avancada.construir(tecnica, top_k, pergunta)
+    saida = pipe.run(inputs, include_outputs_from={chave_docs})
+    docs = saida[chave_docs]["documents"]
+    replies = saida["llm"]["replies"]
+    resposta = (replies[0] if replies else "").strip()
+    log.info("Recuperados %d trecho(s); resposta gerada (Groq)", len(docs))
+    if "tracer" in saida and saida["tracer"].get("trace_url"):
+        log.info("Langfuse trace (busca): %s", saida["tracer"]["trace_url"])
     fontes = [{"id": d.meta.get("id_original") or d.meta.get("arquivo"),
                "trecho": d.content[:160]} for d in docs]
-    return (resp.choices[0].message.content or "").strip(), fontes
+    return resposta, fontes
 
 
-def consultar_grafo(pergunta):
-    log.info("Consulta ao GRAFO (LightRAG, modo hybrid): %r", pergunta)
-    async def _run():
-        from lightrag import QueryParam
+# ---------------------------------------------------------------------------
+# Busca no grafo (LightRAG) - rastreada com @observe
+# ---------------------------------------------------------------------------
+def _grafo_raw(pergunta):
+    from lightrag import QueryParam
+
+    async def _q():
         rag = await indexacao._criar_lightrag()
         try:
             return await rag.aquery(pergunta, param=QueryParam(mode="hybrid"))
         finally:
             await rag.finalize_storages()
-    resposta = asyncio.run(_run())
+
+    resposta = indexacao.rodar_async(_q)  # seguro com/sem event loop ativo
     return resposta, [{"id": "grafo", "trecho": "(resposta sintetizada do grafo de conhecimento)"}]
 
 
-def consultar(pergunta, destino="auto", top_k=5):
+def consultar_grafo(pergunta):
+    log.info("Consulta ao GRAFO (LightRAG, modo hybrid): %r", pergunta)
+    if config.langfuse_configurado():
+        try:
+            from langfuse import observe
+            return observe(name="busca-grafo-aula12")(_grafo_raw)(pergunta)
+        except Exception as e:
+            log.warning("Langfuse (grafo) indisponivel (%s) -> seguindo sem trace", e)
+    return _grafo_raw(pergunta)
+
+
+# ---------------------------------------------------------------------------
+# Roteador
+# ---------------------------------------------------------------------------
+def consultar(pergunta, destino="auto", top_k=5, tecnica="baseline"):
     if destino == "grafo":
-        resp, fontes = consultar_grafo(pergunta)
+        resp, fontes = consultar_grafo(pergunta)        # tecnica nao se aplica ao grafo
         return resp, fontes, "grafo"
-    resp, fontes = consultar_opensearch(pergunta, top_k)
+    resp, fontes = consultar_opensearch(pergunta, top_k, tecnica)
     return resp, fontes, "opensearch"

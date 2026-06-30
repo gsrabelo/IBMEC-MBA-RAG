@@ -14,7 +14,7 @@ opensearch-py>=2.7
 openai>=1.40
 
 # --- Neural Sparse (SPLADE) em Python ---
-transformers>=4.40
+transformers>=4.49,<5     # >=4.49 reconhece rt_detr_v2 (layout do Docling); <5 evita quebra
 torch>=2.0
 
 # --- Observabilidade (LangFuse, auto-instrumentacao do Haystack) ---

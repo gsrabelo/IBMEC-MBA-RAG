@@ -1,17 +1,21 @@
 """
-extracao.py - Extracao INTELIGENTE de documentos (Agente Haystack decide a tecnica).
+extracao.py - Extracao INTELIGENTE de documentos (o LLM decide a tecnica).
 
 Fluxo:
   1) probe(): le 'sinais' baratos do documento (extensao, paginas, texto, imagens).
-  2) Um AGENTE Haystack (LLM via Groq, tool-calling) recebe esses sinais e CHAMA a
-     ferramenta de extracao mais adequada:
+  2) Um LLM (Groq, tool-calling) recebe esses sinais e ESCOLHE a ferramenta de extracao:
        - extrair_planilha : XLSX/CSV (pandas)
        - extrair_texto    : PDF nativo/DOCX/TXT com camada de texto (Docling, sem OCR)
        - extrair_com_ocr  : PDF escaneado / imagens / paginas com figuras (Docling + OCR)
-  3) As ferramentas guardam o conteudo extraido num cache e devolvem ao agente apenas um
-     RESUMO curto (assim o conteudo grande nao infla o contexto do LLM).
+  3) A extracao da tecnica escolhida e executada e o conteudo vai para o cache.
 
-Lazy imports: docling/pandas/fitz so sao carregados quando a ferramenta roda.
+Por que UMA chamada com tool_choice='required' (e nao o laco Agent/ReAct)?
+  A decisao aqui e uma escolha unica (qual extrator usar). Forcar 'tool_choice=required'
+  faz o Groq restringir a geracao ao tool-call ESTRUTURADO, evitando o bug
+  'tool_use_failed' em que o llama emite a chamada como TEXTO (<function=...>{...}</function>).
+  Se mesmo assim falhar, ha um FALLBACK HEURISTICO deterministico pelos sinais do probe.
+
+Lazy imports: docling/pandas/fitz so sao carregados quando a extracao roda.
 """
 
 import json
@@ -19,7 +23,7 @@ from pathlib import Path
 
 from haystack.dataclasses import ChatMessage
 
-from . import config
+from . import config, prompts
 from .log import obter_logger
 
 log = obter_logger(__name__)
@@ -64,9 +68,11 @@ def probe(caminho):
 
 
 # ---------------------------------------------------------------------------
-# Implementacoes de extracao (chamadas pelas ferramentas do agente)
+# Implementacoes de extracao
 # ---------------------------------------------------------------------------
 def _docling_markdown(caminho, com_ocr):
+    import os
+
     from docling.datamodel.base_models import InputFormat
     from docling.datamodel.pipeline_options import PdfPipelineOptions
     from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -74,8 +80,37 @@ def _docling_markdown(caminho, com_ocr):
     opts = PdfPipelineOptions()
     opts.do_ocr = com_ocr
     opts.do_table_structure = True
+    # CONTROLE DE MEMORIA (evita 'std::bad_alloc' em paginas grandes):
+    #  - menos threads = menos paginas processadas em paralelo = menor pico de RAM
+    #  - escala de imagem menor = bitmap menor por pagina
+    #  - nao guardar imagens de pagina/figura que nao usamos
+    opts.images_scale = float(os.getenv("DOCLING_IMAGE_SCALE", "1.0"))
+    opts.generate_page_images = False
+    opts.generate_picture_images = False
+    try:
+        from docling.datamodel.pipeline_options import AcceleratorOptions
+        opts.accelerator_options = AcceleratorOptions(
+            num_threads=int(os.getenv("DOCLING_NUM_THREADS", "2")))
+    except Exception:
+        pass  # versoes antigas do Docling podem nao ter AcceleratorOptions
     conv = DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=opts)})
     return conv.convert(str(caminho)).document.export_to_markdown()
+
+
+def _pymupdf_texto(caminho):
+    """Extracao de texto LEVE (PyMuPDF) - fallback de baixa memoria quando o Docling falha."""
+    try:
+        import fitz
+    except ImportError:
+        import pymupdf as fitz
+    partes = []
+    doc = fitz.open(caminho)
+    try:
+        for page in doc:
+            partes.append(page.get_text())
+    finally:
+        doc.close()
+    return "\n\n".join(partes)
 
 
 def _impl_planilha(caminho):
@@ -99,8 +134,20 @@ def _impl_texto(caminho):
     ext = Path(caminho).suffix.lower()
     if ext in EXT_TEXTO:
         return Path(caminho).read_text(encoding="utf-8", errors="ignore"), []
-    # PDF/DOCX via Docling sem OCR
-    return _docling_markdown(caminho, com_ocr=False), []
+    # PDF/DOCX via Docling sem OCR; se o Docling falhar ou vier quase vazio
+    # (ex.: 'std::bad_alloc' em pagina pesada), cai para o PyMuPDF (baixa memoria).
+    md = ""
+    try:
+        md = _docling_markdown(caminho, com_ocr=False)
+    except Exception as e:
+        log.warning("Docling falhou na extracao de texto (%s) -> tentando PyMuPDF", e)
+    if ext == ".pdf" and len((md or "").strip()) < 50:
+        texto = _pymupdf_texto(caminho)
+        if texto.strip():
+            log.info("Texto extraido via PyMuPDF (fallback de baixa memoria), %d caracteres",
+                     len(texto))
+            return texto, []
+    return md, []
 
 
 def _impl_ocr(caminho):
@@ -116,88 +163,12 @@ def _guardar(caminho, conteudo, tabelas, tecnica):
                        "n_tabelas": len(tabelas or [])}, ensure_ascii=False)
 
 
-# ---------------------------------------------------------------------------
-# 2) Ferramentas do agente (recebem o caminho, extraem, devolvem RESUMO)
-# ---------------------------------------------------------------------------
-def extrair_planilha(caminho: str) -> str:
-    """Extrai dados de PLANILHAS (XLSX/CSV) como tabelas em markdown."""
-    try:
-        conteudo, tabelas = _impl_planilha(caminho)
-        return _guardar(caminho, conteudo, tabelas, "planilha")
-    except Exception as e:
-        return f"[erro planilha: {e}]"
-
-
-def extrair_texto(caminho: str) -> str:
-    """Extrai TEXTO de documentos com camada de texto (PDF nativo, DOCX, TXT) - sem OCR."""
-    try:
-        conteudo, tabelas = _impl_texto(caminho)
-        return _guardar(caminho, conteudo, tabelas, "texto")
-    except Exception as e:
-        return f"[erro texto: {e}]"
-
-
-def extrair_com_ocr(caminho: str) -> str:
-    """Extrai texto de PDFs ESCANEADOS, IMAGENS ou paginas com FIGURAS, usando OCR."""
-    try:
-        conteudo, tabelas = _impl_ocr(caminho)
-        return _guardar(caminho, conteudo, tabelas, "ocr")
-    except Exception as e:
-        return f"[erro ocr: {e}]"
-
-
-# ---------------------------------------------------------------------------
-# 3) Agente Haystack que decide qual ferramenta usar
-# ---------------------------------------------------------------------------
-SYSTEM_EXTRACAO = (
-    "Voce decide a MELHOR tecnica para extrair o conteudo de um documento, a partir dos "
-    "sinais fornecidos. Chame UMA ferramenta:\n"
-    "- extrair_planilha: se for planilha (.xlsx/.csv/.tsv).\n"
-    "- extrair_com_ocr: se for imagem, PDF escaneado (pouco texto + imagens) ou com figuras.\n"
-    "- extrair_texto: nos demais casos (PDF nativo, DOCX, TXT com texto).\n"
-    "Depois de chamar a ferramenta, responda em uma frase o motivo da escolha."
-)
-
-
-def _param_caminho(desc):
-    return {"type": "object",
-            "properties": {"caminho": {"type": "string", "description": desc}},
-            "required": ["caminho"]}
-
-
-def criar_agente_extracao(max_passos=3):
-    from haystack.components.agents import Agent
-    from haystack.components.generators.chat import OpenAIChatGenerator
-    from haystack.tools import Tool
-    from haystack.utils import Secret
-
-    api_key, modelo, base_url = config.config_groq()
-    gerador = OpenAIChatGenerator(api_key=Secret.from_token(api_key), model=modelo,
-                                  api_base_url=base_url,
-                                  generation_kwargs={"temperature": 0.0, "max_tokens": 300})
-    tools = [
-        Tool(name="extrair_planilha", description="Extrai planilhas XLSX/CSV/TSV.",
-             parameters=_param_caminho("caminho do arquivo"), function=extrair_planilha),
-        Tool(name="extrair_texto", description="Extrai texto de PDF nativo/DOCX/TXT (sem OCR).",
-             parameters=_param_caminho("caminho do arquivo"), function=extrair_texto),
-        Tool(name="extrair_com_ocr", description="Extrai via OCR (PDF escaneado/imagem/figuras).",
-             parameters=_param_caminho("caminho do arquivo"), function=extrair_com_ocr),
-    ]
-    return Agent(chat_generator=gerador, tools=tools, system_prompt=SYSTEM_EXTRACAO,
-                 exit_conditions=["text"], max_agent_steps=max_passos)
-
-
-def _tecnica_chamada(mensagens):
-    for m in mensagens:
-        for tc in (getattr(m, "tool_calls", None) or []):
-            return getattr(tc, "tool_name", None) or getattr(tc, "name", None)
-    return None
-
-
-MAPA_COMPLEXIDADE = {"planilha": "planilha", "ocr": "complexo", "texto": "texto_simples"}
-
-# tecnica -> funcao de extracao (usada pelo fallback heuristico)
+# tecnica -> funcao de extracao
 _IMPL = {"planilha": _impl_planilha, "ocr": _impl_ocr, "texto": _impl_texto}
+MAPA_COMPLEXIDADE = {"planilha": "planilha", "ocr": "complexo", "texto": "texto_simples"}
+# nome da ferramenta (no LLM) -> tecnica interna
+MAPA_TOOL_TECNICA = {"extrair_planilha": "planilha", "extrair_texto": "texto",
+                     "extrair_com_ocr": "ocr"}
 
 
 def escolher_por_sinais(sinais):
@@ -210,51 +181,95 @@ def escolher_por_sinais(sinais):
 
 
 def _extrair_direto(caminho, tecnica):
-    """Roda a extracao da tecnica escolhida e popula o cache (sem agente)."""
+    """Roda a extracao da tecnica escolhida e popula o cache."""
     conteudo, tabelas = _IMPL.get(tecnica, _impl_texto)(caminho)
     _guardar(caminho, conteudo, tabelas, tecnica)
     return _CACHE[caminho]
 
 
-def decidir_e_extrair(caminho):
-    """Roda o agente, descobre a tecnica usada e devolve (sinais, tecnica, complexidade, motivo, dados).
+# ---------------------------------------------------------------------------
+# 2) Ferramentas (esquema p/ o LLM escolher) - a execucao real e feita por _extrair_direto
+# ---------------------------------------------------------------------------
+def _param_caminho(desc):
+    return {"type": "object",
+            "properties": {"caminho": {"type": "string", "description": desc}},
+            "required": ["caminho"]}
 
-    O AGENTE (LLM) e o decisor primario. Se ele falhar (ex.: o Groq devolve
-    'tool_use_failed' ao parsear o tool-call do llama-3.3) ou nao chamar nenhuma
-    ferramenta, caimos num FALLBACK HEURISTICO deterministico baseado nos sinais do
-    probe - assim a ingestao nunca quebra por instabilidade do tool-calling.
+
+def _ferramentas():
+    """Define as 3 ferramentas (apenas o ESQUEMA; usado para o tool-calling)."""
+    from haystack.tools import Tool
+
+    # function e obrigatorio no Tool, mas nao sera invocado (so usamos a ESCOLHA do LLM)
+    nada = lambda caminho="": ""
+    return [
+        Tool(name="extrair_planilha", description="Use para PLANILHAS: .xlsx, .xls, .csv, .tsv.",
+             parameters=_param_caminho("caminho do arquivo"), function=nada),
+        Tool(name="extrair_texto",
+             description="Use para PDF nativo, DOCX ou TXT que JA possuem camada de texto (sem OCR).",
+             parameters=_param_caminho("caminho do arquivo"), function=nada),
+        Tool(name="extrair_com_ocr",
+             description="Use para IMAGENS, PDFs ESCANEADOS (pouco texto + imagens) ou paginas com FIGURAS.",
+             parameters=_param_caminho("caminho do arquivo"), function=nada),
+    ]
+
+
+def _llm_escolhe_tecnica(caminho, sinais):
+    """Uma unica chamada ao Groq com tool_choice='required' -> retorna (tecnica, motivo)."""
+    from haystack.components.generators.chat import OpenAIChatGenerator
+    from haystack.utils import Secret
+
+    api_key, modelo, base_url = config.config_llm()
+    gerador = OpenAIChatGenerator(
+        api_key=Secret.from_token(api_key), model=modelo, api_base_url=base_url,
+        tools=_ferramentas(),
+        # tool_choice='required' forca o tool-call ESTRUTURADO (corrige o tool_use_failed do Groq)
+        generation_kwargs={"temperature": 0.0, "max_tokens": 300, "tool_choice": "required"})
+    prompt = (f"Sinais do documento: {json.dumps(sinais, ensure_ascii=False)}\n"
+              "Selecione a ferramenta de extracao adequada.")
+    system = prompts.get_prompts()["extracao_system"]   # editavel na aba Configuracoes
+    msgs = [ChatMessage.from_system(system), ChatMessage.from_user(prompt)]
+    reply = gerador.run(messages=msgs)["replies"][0]
+    chamadas = reply.tool_calls or []
+    if not chamadas:
+        return None, ""
+    nome = chamadas[0].tool_name
+    tecnica = MAPA_TOOL_TECNICA.get(nome)
+    return tecnica, f"o LLM escolheu '{nome}' a partir dos sinais do documento"
+
+
+# ---------------------------------------------------------------------------
+# 3) Orquestracao: LLM decide -> extrai (com fallback heuristico)
+# ---------------------------------------------------------------------------
+def decidir_e_extrair(caminho):
+    """Decide a tecnica (LLM) e extrai. Devolve (sinais, tecnica, complexidade, motivo, dados).
+
+    Se o LLM falhar (ex.: instabilidade de tool-calling do Groq) ou nao escolher nada,
+    cai num FALLBACK HEURISTICO deterministico pelos sinais do probe.
     """
     log.info("Iniciando extracao: %s", caminho)
     sinais = probe(caminho)
     log.debug("Sinais do probe: %s", json.dumps(sinais, ensure_ascii=False))
+
     tecnica, motivo = None, ""
     try:
-        log.info("Consultando o AGENTE (Groq) para escolher a tecnica de extracao...")
-        agente = criar_agente_extracao()
-        prompt = (f"Arquivo: {caminho}\nSinais do documento: {json.dumps(sinais, ensure_ascii=False)}\n"
-                  "Escolha e chame a ferramenta de extracao adequada.")
-        resultado = agente.run(messages=[ChatMessage.from_user(prompt)])
-        tecnica = _tecnica_chamada(resultado.get("messages", []))
-        motivo = resultado["last_message"].text if resultado.get("last_message") else ""
-        log.info("Agente escolheu a tecnica: %s", tecnica or "(nenhuma ferramenta chamada)")
-        log.debug("Mensagem final do agente: %s", motivo)
+        log.info("Consultando o LLM (Groq, tool-calling) para escolher a tecnica...")
+        tecnica, motivo = _llm_escolhe_tecnica(caminho, sinais)
+        log.info("LLM escolheu a tecnica: %s", tecnica or "(nenhuma ferramenta)")
     except Exception as e:
-        log.warning("Agente falhou (%s) -> usando fallback heuristico", e)
-        motivo = f"(fallback heuristico: agente falhou - {e})"
+        log.warning("LLM falhou (%s) -> usando fallback heuristico", e)
+        motivo = f"(fallback heuristico: LLM falhou - {e})"
 
-    dados = _CACHE.get(caminho)
-    # fallback: agente nao escolheu/extraiu -> decide por sinais e extrai direto
-    if not tecnica or not dados or not dados.get("conteudo"):
+    if not tecnica:
         tecnica = escolher_por_sinais(sinais)
-        log.info("FALLBACK heuristico: tecnica '%s' escolhida pelos sinais do documento", tecnica)
+        log.info("FALLBACK heuristico: tecnica '%s' escolhida pelos sinais", tecnica)
         if not motivo:
             motivo = f"(fallback heuristico: tecnica '{tecnica}' escolhida pelos sinais)"
-        dados = _extrair_direto(caminho, tecnica)
 
-    tecnica_final = dados.get("tecnica", tecnica)
-    complexidade = MAPA_COMPLEXIDADE.get(tecnica_final, "texto_simples")
-    log.info("Extracao finalizada: tecnica=%s, complexidade=%s", tecnica_final, complexidade)
-    return sinais, tecnica_final, complexidade, motivo, dados
+    dados = _extrair_direto(caminho, tecnica)
+    complexidade = MAPA_COMPLEXIDADE.get(tecnica, "texto_simples")
+    log.info("Extracao finalizada: tecnica=%s, complexidade=%s", tecnica, complexidade)
+    return sinais, tecnica, complexidade, motivo, dados
 
 
 def limpar_cache(caminho=None):
