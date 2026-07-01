@@ -1,7 +1,7 @@
 .env
 *.env
 .venv/
-.env
+.venv-projeto-final/
 aula2/datasets/acordao-completo-2026.csv
 __pycache__/
 .pyc

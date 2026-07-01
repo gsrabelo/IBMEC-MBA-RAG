@@ -80,6 +80,13 @@ def _docling_markdown(caminho, com_ocr):
     opts = PdfPipelineOptions()
     opts.do_ocr = com_ocr
     opts.do_table_structure = True
+    # do_cell_matching=True (default do Docling) mapeia a estrutura PREVISTA de volta
+    # as coordenadas reais das celulas do PDF; em tabelas densas/com linhas proximas
+    # (ex.: NCM 0207.14.x) isso pode mesclar erroneamente colunas/linhas vizinhas numa
+    # celula so. Setar False usa o texto das celulas PREVISTO pelo proprio modelo de
+    # estrutura, sem reprojetar - e' a correcao documentada pelo Docling p/ esse sintoma.
+    opts.table_structure_options.do_cell_matching = (
+        os.getenv("DOCLING_CELL_MATCHING", "true").lower() not in ("false", "0", "nao", "não"))
     # CONTROLE DE MEMORIA (evita 'std::bad_alloc' em paginas grandes):
     #  - menos threads = menos paginas processadas em paralelo = menor pico de RAM
     #  - escala de imagem menor = bitmap menor por pagina
@@ -130,6 +137,22 @@ def _impl_planilha(caminho):
     return "\n\n".join(partes), tabelas
 
 
+_RE_TABELA_MD = None  # compilado sob demanda (evita import de 're' no topo do modulo)
+
+
+def _detectar_tabelas_md(conteudo):
+    """Conta blocos de tabela Markdown (linha separadora |---|---|) no texto extraido.
+
+    O Docling (do_table_structure=True) exporta tabelas como Markdown GFM. Sem isso,
+    'dados[tabelas]' fica sempre vazio p/ PDF/DOCX e a heuristica de chunking nunca
+    escolhe a tecnica 'tabela' sozinha (so via override manual)."""
+    import re
+    global _RE_TABELA_MD
+    if _RE_TABELA_MD is None:
+        _RE_TABELA_MD = re.compile(r"^\s*\|[\s:|-]+\|\s*$", re.MULTILINE)
+    return [{"indice": i} for i, _ in enumerate(_RE_TABELA_MD.finditer(conteudo or ""))]
+
+
 def _impl_texto(caminho):
     ext = Path(caminho).suffix.lower()
     if ext in EXT_TEXTO:
@@ -146,8 +169,8 @@ def _impl_texto(caminho):
         if texto.strip():
             log.info("Texto extraido via PyMuPDF (fallback de baixa memoria), %d caracteres",
                      len(texto))
-            return texto, []
-    return md, []
+            return texto, []  # PyMuPDF nao detecta estrutura de tabela -> sem 'tabelas'
+    return md, _detectar_tabelas_md(md)
 
 
 def _impl_ocr(caminho):

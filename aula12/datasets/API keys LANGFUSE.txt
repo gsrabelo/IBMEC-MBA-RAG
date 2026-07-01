@@ -1,0 +1,4 @@
+KEYS LANGFUSE projeto final
+LANGFUSE_SECRET_KEY="sk-lf-f38d9874-15ce-4fb3-82d9-71264e76be2e"
+LANGFUSE_PUBLIC_KEY="pk-lf-7108404f-5d6f-4cac-b212-379cdffc7959"
+LANGFUSE_BASE_URL="http://localhost:3000"

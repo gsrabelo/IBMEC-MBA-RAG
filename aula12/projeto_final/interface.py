@@ -24,7 +24,7 @@ API_URL = os.getenv("API_URL", "http://localhost:8001")
 GRADIO_PORT = int(os.getenv("GRADIO_PORT", "7860"))
 API_KEY = os.getenv("API_KEY", "")  # so se a API exigir X-API-Key
 
-CHUNKING_OPCOES = ["auto", "fixo", "recursivo", "sentenca_janela", "semantico", "hierarquico"]
+CHUNKING_OPCOES = ["auto", "fixo", "recursivo", "sentenca_janela", "semantico", "hierarquico", "tabela"]
 DESTINO_OPCOES = ["auto", "opensearch", "grafo"]
 TECNICA_OPCOES = ["baseline", "multi_query", "rag_fusion", "step_back"]  # query enhancement (OpenSearch)
 
